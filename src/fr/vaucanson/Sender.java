@@ -28,7 +28,7 @@ public class Sender implements Runnable
 		return inet.isReachable(5000) ? true : false;
 	}
 
-	synchronized public static String send(String urlParameters)
+	public static String send(String urlParameters)
 	{
 		System.out.println("Envoi de la requete : " + urlParameters);
 		URL url;
@@ -75,6 +75,6 @@ public class Sender implements Runnable
 	@Override
 	public void run() 
 	{
-		send(this.req);
+		System.out.println(Outils.decrypt(send(this.req)));
 	}
 }

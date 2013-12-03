@@ -3,6 +3,8 @@ package fr.vaucanson;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JFrame;
@@ -12,7 +14,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Interface extends JFrame
+public class Interface extends JFrame implements KeyListener
 {
 	private static final long serialVersionUID = 7231194594050358481L;
 	private static final int VERSION = 1;
@@ -31,6 +33,7 @@ public class Interface extends JFrame
 		frame.setAlwaysOnTop(true);
 		frame.setLayout(new BorderLayout());
 		frame.setVisible(true);
+		frame.addKeyListener(this);
 		frame.addWindowListener(new WindowListener()
 		{
 			@Override
@@ -104,7 +107,8 @@ public class Interface extends JFrame
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
-				System.out.println(Outils.decrypt(Sender.send("v=" + sliderSpeed.getValue())));
+				Sender s = new Sender("v=" + sliderSpeed.getValue());
+				s.run();
 			}
 		});
 		sliderOri = new JSlider();
@@ -130,21 +134,6 @@ public class Interface extends JFrame
 					break;
 				}
 			}
-
-			private int transformDirToNumber(String text)
-            {
-	            switch(text)
-	            {
-	            	case "Gauche":
-	            		return 0;
-	            	case "Devant":
-	            		return 1;
-	            	case "Droite":
-	            		return 2;
-	            	default:
-	            		return -1;
-	            }
-            }
 		});
 		panSliderS.add(sliderSpeed);
 		panSText.add(sliderTextS);
@@ -160,4 +149,75 @@ public class Interface extends JFrame
 		frame.setLocationRelativeTo(null);
 		frame.pack();
 	}
+
+	private int transformDirToNumber(String text)
+    {
+        switch(text)
+        {
+        	case "Gauche":
+        		return 0;
+        	case "Devant":
+        		return 1;
+        	case "Droite":
+        		return 2;
+        	default:
+        		return -1;
+        }
+    }
+	
+	@Override
+    public void keyPressed(KeyEvent e)
+    {
+		System.out.println(e.getExtendedKeyCode());
+		if(e.getExtendedKeyCode() == 37)
+		{
+			if(transformDirToNumber(sliderTextO.getText()) > 0)
+			{
+				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) - 1);
+				System.out.println(Outils.decrypt(Sender.send("o=" + sliderOri.getValue())));
+				switch(sliderOri.getValue())
+				{
+					case 0:
+						sliderTextO.setText("Gauche");
+					break;
+					case 1:
+						sliderTextO.setText("Devant");
+					break;
+				}
+			}
+		}
+		else if(e.getExtendedKeyCode() == 39)
+		{
+			if(transformDirToNumber(sliderTextO.getText()) < 2)
+			{
+				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) + 1);
+				System.out.println(Outils.decrypt(Sender.send("o=" + sliderOri.getValue())));
+				switch(sliderOri.getValue())
+				{
+					case 1:
+						sliderTextO.setText("Devant");
+					break;
+					case 2:
+						sliderTextO.setText("Droite");
+					break;
+				}
+			}
+		}
+		else if(e.getExtendedKeyCode() == 38)
+		{
+			if(Integer.parseInt(sliderTextS.getText()) < 9225)
+			{
+				sliderSpeed.setValue(Integer.parseInt(sliderTextS.getText()) + 1);
+				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
+				Sender s = new Sender("v=" + sliderSpeed.getValue());
+				s.run();
+			}
+		}
+    }
+
+	@Override
+    public void keyReleased(KeyEvent e){}
+
+	@Override
+    public void keyTyped(KeyEvent e){}
 }
