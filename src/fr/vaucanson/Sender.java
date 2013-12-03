@@ -9,18 +9,26 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 
-public class Sender
+public class Sender implements Runnable
 {
-	public final static String IP = "127.0.0.1";
-	private final static String IP2 = "http://127.0.0.1/";
+	public final static String IP = "www.mrcraftcod.fr";
+	private final static String IP2 = "http://www.mrcraftcod.fr/PI/index.php";
+	private static String req;
 
+	public Sender(String req)
+	{
+		this.req = req;
+	}
+	
 	public static boolean init() throws IOException
 	{
+		System.setProperty("http.proxyHost", "proxy");
+		System.setProperty("http.proxyPort", "8080");
 		final InetAddress inet = InetAddress.getByName(IP);
 		return inet.isReachable(5000) ? true : false;
 	}
 
-	public static String send(String urlParameters)
+	synchronized public static String send(String urlParameters)
 	{
 		System.out.println("Envoi de la requete : " + urlParameters);
 		URL url;
@@ -62,5 +70,11 @@ public class Sender
 			if(con != null)
 				con.disconnect();
 		}
+	}
+
+	@Override
+	public void run() 
+	{
+		send(this.req);
 	}
 }
