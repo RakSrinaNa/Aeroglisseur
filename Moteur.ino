@@ -9,15 +9,10 @@ TKPotentiometer pot(I0);
 
 int getSpeedToServo(unsigned int spd)
 {
-  //Serial.println("Wanted speed: ");
-  //Serial.print(spd);
-  //Serial.print("    ToServo : ");
   if(spd == 0)
   {
-    // Serial.print("90");
     return 90;  
   }
-  //Serial.print(119 + (int)(spd/151.22));
   return (119 + (int)(spd/151.22));
 }
 
@@ -56,47 +51,19 @@ void receid(String key, int value)
   }
 }
 
-int getVariableBin(unsigned int bin)
-{
-  switch(bin)
-  {
-  case 48: 
-    return 0;
-  case 49: 
-    return 1;
-  case 50: 
-    return 2;
-  case 51: 
-    return 3;
-  case 52: 
-    return 4;
-  case 53: 
-    return 5;
-  case 54: 
-    return 6;
-  case 55: 
-    return 7;
-  case 56: 
-    return 8;
-  case 57: 
-    return 9;    
-  default: 
-    return -1;
-  }  
-}
-String getValue(String s)
+String getTag(String s)
 {
   return s.substring(s.indexOf('#') + 1, s.indexOf('='));
 }
 
-String getTag(String s)
+int getValue(String s)
 {
-  return s.substring(s.indexOf('=') + 1);
+  return s.substring(s.indexOf('=') + 1).toInt();
 }
-char* decrypt(String inp)
+
+void decrypt(String inp)
 {
-  if(inp.indexOf("#or=") >= 0 || inp.indexOf("#vi=")  >= 0  || inp.indexOf("#st=") >= 0 )
-    return {getValue(s), getTag(s)};
+    receid(getTag(inp), getValue(inp)); 
 }
 
 void setup()
@@ -111,20 +78,16 @@ void setup()
 
 void loop()
 {
-  String inData= "";
-  if (Serial.available() > 0) 
+  String inString = "";
+  while (Serial.available() > 0) 
   {
-    int h = Serial.available();
-    for (int i=0;i<h;i++)
-    {
-      inData += (char)Serial.read();
-    }
-    // if you are getting escape -characters try Serial.read(); here
+    int inChar = Serial.read();
+      inString += (char)inChar;
   }
-  Serial.println(decrypt(inData));
+  if(inString != "")
+  {
+    Serial.println(inString);
+    decrypt(inString);
+  }
   delay(1000);
 }
-
-
-
-
