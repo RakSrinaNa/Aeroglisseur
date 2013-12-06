@@ -2,33 +2,52 @@ package fr.vaucanson;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Sender implements Runnable
+public class Sender extends Thread
 {
 	public final static String IP = "www.mrcraftcod.fr";
 	private final static String IP2 = "http://www.mrcraftcod.fr/PI/index.php";
-	private static String req;
+	private static Map<String, Integer> reqs;
+	private static Map<String, Integer> reqsSended;
+	private static final String[] keys = {"or", "st", "vi"};
 
-	public Sender(String req)
+	public Sender()
 	{
-		this.req = req;
+		System.out.println("Creating sender...");
+		this.setName("Sender");
+		reqs = new HashMap<String, Integer>();
+		reqs.put("or", 5);
+		reqs.put("vi", 0);
+		reqs.put("st", 0);
+		reqsSended = new HashMap<String, Integer>();
+		reqsSended.put("or", 5);
+		reqsSended.put("vi", 0);
+		reqsSended.put("st", 0);
+		System.out.println("Sender created!");
 	}
 	
-	public static boolean init() throws IOException
+	private static boolean init() throws Exception
 	{
+		System.out.println("Initializing sender...");
+		final InetAddress inet = InetAddress.getByName(IP);
+		if(inet.isReachable(5000))
+			return true;
+		System.out.println("Proxy ins needed, configuring it");
 		System.setProperty("http.proxyHost", "proxy");
 		System.setProperty("http.proxyPort", "8080");
-		final InetAddress inet = InetAddress.getByName(IP);
-		return inet.isReachable(5000) ? true : false;
+		if(inet.isReachable(5000))
+			return true;
+		throw new Exception("Couldn't connect to the server!");
 	}
 
-	public static String send(String urlParameters)
+	synchronized private static String send(String urlParameters)
 	{
 		System.out.println("Envoi de la requete : " + urlParameters);
 		URL url;
@@ -75,6 +94,47 @@ public class Sender implements Runnable
 	@Override
 	public void run() 
 	{
-		System.out.println(Outils.decrypt(send(this.req)));
+		try
+        {
+	        init();
+	        System.out.println("Sender initialized!");
+        }
+        catch(Exception e)
+        {
+	        e.printStackTrace();
+	        return;
+        }
+		while(!Thread.interrupted())
+		{
+			try
+			{
+				Thread.sleep(50);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			for(String key : keys)
+			{
+				Map temp = reqs;
+				Map temp2 = reqsSended;
+				if(reqs.get(key) != reqsSended.get(key))
+				{
+					System.out.println(Outils.decrypt(send("#" + key + "=" + reqs.get(key))));
+					reqsSended.put(key, reqs.get(key));
+				}
+			}
+		}
+	}
+	
+	synchronized public static void addToSend(String key, int value)
+	{
+		System.out.println("Changing " + key + " to " + value);
+		reqs.put(key, value);
+	}
+	
+	public static int getKeyValue(String key)
+	{
+		return reqs.get(key);
 	}
 }

@@ -1,12 +1,13 @@
 package fr.vaucanson;
 
-import java.io.IOException;
-
 public class Main
 {
-	public static void main(String[] args) throws IOException
+	public static Sender sender;
+	
+	public static void main(String[] args) throws Exception
 	{
-		System.out.println("Commande ping vers " + Sender.IP + " r\351ussie? " + Sender.init());
+		sender = new Sender();
+		sender.start();
 		new Interface();
 	}
 }

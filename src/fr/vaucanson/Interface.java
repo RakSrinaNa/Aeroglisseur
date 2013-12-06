@@ -106,9 +106,8 @@ public class Interface extends JFrame implements KeyListener
 			@Override
 			public void stateChanged(final ChangeEvent arg0)
 			{
+				Main.sender.addToSend("vi", sliderSpeed.getValue());
 				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
-				Sender s = new Sender("v=" + sliderSpeed.getValue());
-				s.run();
 			}
 		});
 		sliderOri = new JSlider();
@@ -120,7 +119,7 @@ public class Interface extends JFrame implements KeyListener
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				if(transformDirToNumber(sliderTextO.getText()) != sliderOri.getValue())
-					System.out.println(Outils.decrypt(Sender.send("o=" + sliderOri.getValue())));
+					Main.sender.addToSend("or", sliderOri.getValue());
 				switch(sliderOri.getValue())
 				{
 					case 0:
@@ -174,7 +173,7 @@ public class Interface extends JFrame implements KeyListener
 			if(transformDirToNumber(sliderTextO.getText()) > 0)
 			{
 				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) - 1);
-				System.out.println(Outils.decrypt(Sender.send("o=" + sliderOri.getValue())));
+				Main.sender.addToSend("or", sliderOri.getValue());
 				switch(sliderOri.getValue())
 				{
 					case 0:
@@ -191,7 +190,7 @@ public class Interface extends JFrame implements KeyListener
 			if(transformDirToNumber(sliderTextO.getText()) < 2)
 			{
 				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) + 1);
-				System.out.println(Outils.decrypt(Sender.send("o=" + sliderOri.getValue())));
+				Main.sender.addToSend("or", sliderOri.getValue());
 				switch(sliderOri.getValue())
 				{
 					case 1:
@@ -209,8 +208,7 @@ public class Interface extends JFrame implements KeyListener
 			{
 				sliderSpeed.setValue(Integer.parseInt(sliderTextS.getText()) + 1);
 				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
-				Sender s = new Sender("v=" + sliderSpeed.getValue());
-				s.run();
+				Main.sender.addToSend("or", sliderOri.getValue());
 			}
 		}
     }
