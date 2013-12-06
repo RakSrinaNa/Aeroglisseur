@@ -18,6 +18,11 @@ int getSpeedToServo(unsigned int spd)
 
 void receid(String key, int value)
 {
+  if(value < 0 || value > 10000)
+  {
+     Serial.println("La valeur voulue n'est pas dans l'encadrement possible!");
+    return; 
+  }
   if(key=="vi")
   {
     Serial.print("On modifie la vitesse a ");
@@ -47,7 +52,7 @@ void receid(String key, int value)
   }
   else
   { 
-    Serial.println("error,the command was not understand");
+    Serial.println("Error, tag not reconized!");
   }
 }
 
