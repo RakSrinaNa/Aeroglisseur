@@ -14,21 +14,8 @@ public class Sender extends Thread
 {
 	public final static String IP = "www.mrcraftcod.fr";
 	private final static String IP2 = "http://www.mrcraftcod.fr/PI/index.php";
-	private static Map<String, Integer> reqs;
 	private static Map<String, Integer> reqsSended;
-	private static final String[] keys =
-		{"or", "st", "vi"};
-
-	synchronized public static void addToSend(final String key, final int value)
-	{
-		System.out.println("Changing " + key + " to " + value);
-		reqs.put(key, value);
-	}
-
-	public static int getKeyValue(final String key)
-	{
-		return reqs.get(key);
-	}
+	private static final String[] keys = {"or", "st", "vi"};
 
 	private static boolean init() throws Exception
 	{
@@ -92,10 +79,6 @@ public class Sender extends Thread
 	{
 		System.out.println("Creating sender...");
 		setName("Sender");
-		reqs = new HashMap<String, Integer>();
-		reqs.put("or", 5);
-		reqs.put("vi", 0);
-		reqs.put("st", 0);
 		reqsSended = new HashMap<String, Integer>();
 		reqsSended.put("or", 5);
 		reqsSended.put("vi", 0);
@@ -127,10 +110,10 @@ public class Sender extends Thread
 				e.printStackTrace();
 			}
 			for(final String key : keys)
-				if(reqs.get(key) != reqsSended.get(key))
+				if(Interface.getReqs().get(key) != reqsSended.get(key))
 				{
-					System.out.println(Outils.decrypt(send("#" + key + "=" + reqs.get(key))));
-					reqsSended.put(key, reqs.get(key));
+					System.out.println(Outils.decrypt(send(key + "=" + Interface.getReqs().get(key))));
+					reqsSended.put(key, Interface.getReqs().get(key));
 				}
 		}
 	}

@@ -10,7 +10,7 @@ public class Outils
 		Map<String, String> m = new HashMap<String, String>();
 		String[] lin = get.split("<br>");
 		for(String s : lin)
-			if(s.contains("#or=") || s.contains("#vi="))
+			if(s.contains("#or=") || s.contains("#vi=") || s.contains("#st="))
 				m.put(getValue(s), getTag(s));
 		return m;
 	}

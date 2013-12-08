@@ -7,6 +7,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,16 +18,26 @@ import javax.swing.event.ChangeListener;
 
 public class Interface extends JFrame implements KeyListener
 {
+	private static Map<String, Integer> reqs;
 	private static final long serialVersionUID = 7231194594050358481L;
 	private static final int VERSION = 1;
 	private static JFrame frame;
 	private static JSlider sliderSpeed, sliderOri;
-	private static JPanel panSliderS, panSText, panVit, panSliderO, panOText,
-	        panOri;
+	private static JPanel panSliderS, panSText, panVit, panSliderO, panOText, panOri;
 	private static JLabel sliderTextS, sliderTextO;
 
+	synchronized public static void addToSend(final String key, final int value)
+	{
+		//System.out.println("Changing " + key + " to " + value);
+		reqs.put(key, value);
+	}
+	
 	public Interface()
 	{
+		reqs = new HashMap<String, Integer>();
+		reqs.put("or", 5);
+		reqs.put("vi", 0);
+		reqs.put("st", 0);
 		frame = new JFrame("Controleur de l'a\351roglisseur v" + VERSION);
 		frame.setLayout(new BorderLayout());
 		frame.setPreferredSize(new Dimension(570, 110));
@@ -106,7 +118,7 @@ public class Interface extends JFrame implements KeyListener
 			@Override
 			public void stateChanged(final ChangeEvent arg0)
 			{
-				Main.sender.addToSend("vi", sliderSpeed.getValue());
+				addToSend("vi", sliderSpeed.getValue());
 				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
 			}
 		});
@@ -119,7 +131,7 @@ public class Interface extends JFrame implements KeyListener
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				if(transformDirToNumber(sliderTextO.getText()) != sliderOri.getValue())
-					Main.sender.addToSend("or", sliderOri.getValue());
+					addToSend("or", sliderOri.getValue());
 				switch(sliderOri.getValue())
 				{
 					case 0:
@@ -173,7 +185,7 @@ public class Interface extends JFrame implements KeyListener
 			if(transformDirToNumber(sliderTextO.getText()) > 0)
 			{
 				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) - 1);
-				Main.sender.addToSend("or", sliderOri.getValue());
+				addToSend("or", sliderOri.getValue());
 				switch(sliderOri.getValue())
 				{
 					case 0:
@@ -190,7 +202,7 @@ public class Interface extends JFrame implements KeyListener
 			if(transformDirToNumber(sliderTextO.getText()) < 2)
 			{
 				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) + 1);
-				Main.sender.addToSend("or", sliderOri.getValue());
+				addToSend("or", sliderOri.getValue());
 				switch(sliderOri.getValue())
 				{
 					case 1:
@@ -208,7 +220,7 @@ public class Interface extends JFrame implements KeyListener
 			{
 				sliderSpeed.setValue(Integer.parseInt(sliderTextS.getText()) + 1);
 				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
-				Main.sender.addToSend("or", sliderOri.getValue());
+				addToSend("or", sliderOri.getValue());
 			}
 		}
     }
@@ -218,4 +230,14 @@ public class Interface extends JFrame implements KeyListener
 
 	@Override
     public void keyTyped(KeyEvent e){}
+
+	public static Map<String, Integer> getReqs()
+    {
+	    return reqs;
+    }
+
+	public static void setReqs(Map<String, Integer> reqs)
+    {
+	    Interface.reqs = reqs;
+    }
 }
