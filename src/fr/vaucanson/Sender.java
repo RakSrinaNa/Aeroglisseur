@@ -31,8 +31,9 @@ public class Sender extends Thread
 		throw new Exception("Couldn't connect to the server!");
 	}
 
-	synchronized private static String send(final String urlParameters)
+	synchronized private static String send(final String key, final int value)
 	{
+		final String urlParameters = key + "=" + value;
 		System.out.println("Envoi de la requete : " + urlParameters);
 		URL url;
 		HttpURLConnection con = null;
@@ -61,6 +62,7 @@ public class Sender extends Thread
 				response.append('\r');
 			}
 			rd.close();
+			reqsSended.put(key, Interface.getReqs().get(key));
 			return response.toString().contains("Parse error: syntax error") ? "Error" : response.toString().replace("﻿ ", "").replace("﻿", "").replace("<br />", "\n").replace("</p>", "").replace("<p>", "");
 		}
 		catch(final Exception e)
@@ -111,10 +113,7 @@ public class Sender extends Thread
 			}
 			for(final String key : keys)
 				if(Interface.getReqs().get(key) != reqsSended.get(key))
-				{
-					System.out.println(Outils.decrypt(send(key + "=" + Interface.getReqs().get(key))));
-					reqsSended.put(key, Interface.getReqs().get(key));
-				}
+					System.out.println(Outils.decrypt(send(key, Interface.getReqs().get(key))));
 		}
 	}
 }
