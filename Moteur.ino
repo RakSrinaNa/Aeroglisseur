@@ -6,6 +6,9 @@ Servo motor1;
 //Servo motor3;
 Servo motor4;
 TKPotentiometer pot(I0);
+int valvi;
+int valor;
+int valst;
 
 int getSpeedToServo(unsigned int spd)
 {
@@ -30,13 +33,13 @@ void receid(String key, int value)
     motor1.write(getSpeedToServo(value));
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
-    valvi=value
+    valvi=value;
   }
   else if(key=="or")
   {
     Serial.print("On modifie l'orientation a ");
     Serial.println(value); 
-    valor=value
+    valor=value;
   }
   else if(key=="st")
   {
@@ -48,9 +51,24 @@ void receid(String key, int value)
     }
     else
     {
-      valst=0
+      valst=0;
       motor4.write(90);
       Serial.println("On  eteint la sustentation");
+    }
+  }
+  else if(key=="get")
+  {
+    if(value == 0)
+    {
+      Serial.println(getSpd());
+    }
+    else if(value == 1)
+    {
+      Serial.println(getOri());
+    }
+    else if(value == 2)
+    {
+      Serial.println(getSus());
     }
   }
   else
@@ -59,19 +77,17 @@ void receid(String key, int value)
   }
 }
 
-int (sp,or,st);
-
-void spd(sp);
+int getSpd()
 {
-  return (valvi);
+  return valvi;
 }
-void orient(or);
+int getOri()
 {
-  return (valor);
+  return valor;
 }
-void susten(st);
+int getSus()
 {
-  return (valust);
+  return valst;
 }
 
 String getTag(String s)
