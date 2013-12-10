@@ -12,15 +12,15 @@ import java.util.Map;
 
 public class Sender extends Thread
 {
-	public final static String IP = "www.mrcraftcod.fr";
-	private final static String IP2 = "http://www.mrcraftcod.fr/PI/index.php";
-	private static Map<String, Integer> reqsSended;
+	public final static String IP_PING = "127.0.0.1";//"www.mrcraftcod.fr";
+	private final static String IP_URL = "http://127.0.0.1/PI/index.html";//"http://www.mrcraftcod.fr/PI/index.php";
+	private static Map<String, Integer> requestsSended;
 	private static final String[] keys = {"or", "st", "vi"};
 
 	private static boolean init() throws Exception
 	{
 		System.out.println("Initializing sender...");
-		final InetAddress inet = InetAddress.getByName(IP);
+		final InetAddress inet = InetAddress.getByName(IP_PING);
 		if(inet.isReachable(5000))
 			return true;
 		System.out.println("Proxy ins needed, configuring it");
@@ -34,35 +34,35 @@ public class Sender extends Thread
 	synchronized private static String send(final String key, final int value)
 	{
 		final String urlParameters = key + "=" + value;
-		System.out.println("Envoi de la requete : " + urlParameters);
+		System.out.println("Envoi de la requete : #" + urlParameters);
 		URL url;
-		HttpURLConnection con = null;
+		HttpURLConnection connection = null;
 		try
 		{
-			url = new URL(IP2);
-			con = (HttpURLConnection) url.openConnection();
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-			con.setRequestProperty("Content-Language", "fr-FR");
-			con.setUseCaches(false);
-			con.setDoInput(true);
-			con.setDoOutput(true);
-			final DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(urlParameters);
-			wr.flush();
-			wr.close();
-			final InputStream is = con.getInputStream();
-			final BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+			url = new URL(IP_URL);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", "fr-FR");
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			final DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
+			writer.writeBytes(urlParameters);
+			writer.flush();
+			writer.close();
+			final InputStream is = connection.getInputStream();
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			String line;
 			final StringBuffer response = new StringBuffer();
-			while((line = rd.readLine()) != null)
+			while((line = reader.readLine()) != null)
 			{
 				response.append(line);
 				response.append('\r');
 			}
-			rd.close();
-			reqsSended.put(key, Interface.getReqs().get(key));
+			reader.close();
+			requestsSended.put(key, Interface.getRequests().get(key));
 			return response.toString().contains("Parse error: syntax error") ? "Error" : response.toString().replace("﻿ ", "").replace("﻿", "").replace("<br />", "\n").replace("</p>", "").replace("<p>", "");
 		}
 		catch(final Exception e)
@@ -72,8 +72,8 @@ public class Sender extends Thread
 		}
 		finally
 		{
-			if(con != null)
-				con.disconnect();
+			if(connection != null)
+				connection.disconnect();
 		}
 	}
 
@@ -81,10 +81,10 @@ public class Sender extends Thread
 	{
 		System.out.println("Creating sender...");
 		setName("Sender");
-		reqsSended = new HashMap<String, Integer>();
-		reqsSended.put("or", 5);
-		reqsSended.put("vi", 0);
-		reqsSended.put("st", 0);
+		requestsSended = new HashMap<String, Integer>();
+		requestsSended.put("or", 5);
+		requestsSended.put("vi", 0);
+		requestsSended.put("st", 0);
 		System.out.println("Sender created!");
 	}
 
@@ -112,8 +112,8 @@ public class Sender extends Thread
 				e.printStackTrace();
 			}
 			for(final String key : keys)
-				if(Interface.getReqs().get(key) != reqsSended.get(key))
-					System.out.println(Outils.decrypt(send(key, Interface.getReqs().get(key))));
+				if(Interface.getRequests().get(key) != requestsSended.get(key))
+					System.out.println(Outils.decrypt(send(key, Interface.getRequests().get(key))));
 		}
 	}
 }

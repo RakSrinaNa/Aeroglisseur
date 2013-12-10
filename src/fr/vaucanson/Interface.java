@@ -18,26 +18,26 @@ import javax.swing.event.ChangeListener;
 
 public class Interface extends JFrame implements KeyListener
 {
-	private static Map<String, Integer> reqs;
+	private static Map<String, Integer> requests;
 	private static final long serialVersionUID = 7231194594050358481L;
 	private static final int VERSION = 1;
 	private static JFrame frame;
-	private static JSlider sliderSpeed, sliderOri;
-	private static JPanel panSliderS, panSText, panVit, panSliderO, panOText, panOri;
-	private static JLabel sliderTextS, sliderTextO;
+	private static JSlider sliderSpeed, sliderOrientation, sliderSustentation;
+	private static JPanel panelSliderSpeed, panelTextSpeed, panelSpeed, panelSliderOrientation, panelTextOrientation, panelOrientation, panelSliderSustentation, panelTextSustentation, panelSustentation;
+	private static JLabel labelSpeed, labelOrientation, labelSustentation;
 
 	synchronized public static void addToSend(final String key, final int value)
 	{
-		//System.out.println("Changing " + key + " to " + value);
-		reqs.put(key, value);
+		System.out.println("Changing " + key + " to " + value);
+		requests.put(key, value);
 	}
 	
 	public Interface()
 	{
-		reqs = new HashMap<String, Integer>();
-		reqs.put("or", 5);
-		reqs.put("vi", 0);
-		reqs.put("st", 0);
+		requests = new HashMap<String, Integer>();
+		requests.put("or", 5);
+		requests.put("vi", 0);
+		requests.put("st", 0);
 		frame = new JFrame("Controleur de l'a\351roglisseur v" + VERSION);
 		frame.setLayout(new BorderLayout());
 		frame.setPreferredSize(new Dimension(570, 110));
@@ -84,32 +84,45 @@ public class Interface extends JFrame implements KeyListener
 			{
 			}
 		});
-		panSliderS = new JPanel();
-		panSliderS.setLayout(new BorderLayout());
-		panSliderS.setBackground(Color.ORANGE);
-		panSliderS.setPreferredSize(new Dimension(500, 30));
-		panSliderO = new JPanel();
-		panSliderO.setLayout(new BorderLayout());
-		panSliderO.setBackground(Color.ORANGE);
-		panSliderO.setPreferredSize(new Dimension(500, 30));
-		panVit = new JPanel();
-		panVit.setLayout(new BorderLayout());
-		panOri = new JPanel();
-		panOri.setLayout(new BorderLayout());
-		panSText = new JPanel();
-		panSText.setLayout(new BorderLayout());
-		panSText.setBackground(Color.GREEN);
-		panSText.setPreferredSize(new Dimension(50, 5));
-		panOText = new JPanel();
-		panOText.setLayout(new BorderLayout());
-		panOText.setBackground(Color.GREEN);
-		panOText.setPreferredSize(new Dimension(50, 5));
-		sliderTextS = new JLabel();
-		sliderTextS.setBackground(Color.GRAY);
-		sliderTextS.setText("0");
-		sliderTextO = new JLabel();
-		sliderTextO.setBackground(Color.GRAY);
-		sliderTextO.setText("Devant");
+		panelSliderSpeed = new JPanel();
+		panelSliderSpeed.setLayout(new BorderLayout());
+		panelSliderSpeed.setBackground(Color.ORANGE);
+		panelSliderSpeed.setPreferredSize(new Dimension(500, 30));
+		panelSliderOrientation = new JPanel();
+		panelSliderOrientation.setLayout(new BorderLayout());
+		panelSliderOrientation.setBackground(Color.ORANGE);
+		panelSliderOrientation.setPreferredSize(new Dimension(500, 30));
+		panelSliderSustentation = new JPanel();
+		panelSliderSustentation.setLayout(new BorderLayout());
+		panelSliderSustentation.setBackground(Color.ORANGE);
+		panelSliderSustentation.setPreferredSize(new Dimension(500, 30));
+		panelSpeed = new JPanel();
+		panelSpeed.setLayout(new BorderLayout());
+		panelOrientation = new JPanel();
+		panelOrientation.setLayout(new BorderLayout());
+		panelSustentation = new JPanel();
+		panelSustentation.setLayout(new BorderLayout());
+		panelTextSpeed = new JPanel();
+		panelTextSpeed.setLayout(new BorderLayout());
+		panelTextSpeed.setBackground(Color.GREEN);
+		panelTextSpeed.setPreferredSize(new Dimension(50, 5));
+		panelTextOrientation = new JPanel();
+		panelTextOrientation.setLayout(new BorderLayout());
+		panelTextOrientation.setBackground(Color.GREEN);
+		panelTextOrientation.setPreferredSize(new Dimension(50, 5));
+		panelTextSustentation = new JPanel();
+		panelTextSustentation.setLayout(new BorderLayout());
+		panelTextSustentation.setBackground(Color.GREEN);
+		panelTextSustentation.setPreferredSize(new Dimension(50, 5));
+		labelSpeed = new JLabel();
+		labelSpeed.setBackground(Color.GRAY);
+		labelSpeed.setText("0");
+		labelOrientation = new JLabel();
+		labelOrientation.setBackground(Color.GRAY);
+		labelOrientation.setText("Devant");
+		labelSustentation = new JLabel();
+		labelSustentation.setBackground(Color.GRAY);
+		labelSustentation.setText("OFF");
 		sliderSpeed = new JSlider();
 		sliderSpeed.setValue(0);
 		sliderSpeed.setMaximum(9225);
@@ -119,110 +132,150 @@ public class Interface extends JFrame implements KeyListener
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				addToSend("vi", sliderSpeed.getValue());
-				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
+				labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
 			}
 		});
-		sliderOri = new JSlider();
-		sliderOri.setValue(1);
-		sliderOri.setMaximum(2);
-		sliderOri.addChangeListener(new ChangeListener()
+		sliderOrientation = new JSlider();
+		sliderOrientation.setValue(1);
+		sliderOrientation.setMaximum(2);
+		sliderOrientation.addChangeListener(new ChangeListener()
 		{
+			private int transformDirToNumber(String text)
+		    {
+		        switch(text)
+		        {
+		        	case "Gauche":
+		        		return 0;
+		        	case "Devant":
+		        		return 1;
+		        	case "Droite":
+		        		return 2;
+		        	default:
+		        		return -1;
+		        }
+		    }
+			
 			@Override
 			public void stateChanged(final ChangeEvent arg0)
 			{
-				if(transformDirToNumber(sliderTextO.getText()) != sliderOri.getValue())
-					addToSend("or", sliderOri.getValue());
-				switch(sliderOri.getValue())
+				if(transformDirToNumber(labelOrientation.getText()) != sliderOrientation.getValue())
+					addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
 				{
 					case 0:
-						sliderTextO.setText("Gauche");
+						labelOrientation.setText("Gauche");
 					break;
 					case 1:
-						sliderTextO.setText("Devant");
+						labelOrientation.setText("Devant");
 					break;
 					case 2:
-						sliderTextO.setText("Droite");
+						labelOrientation.setText("Droite");
 					break;
 				}
 			}
 		});
-		panSliderS.add(sliderSpeed);
-		panSText.add(sliderTextS);
-		panVit.add(panSliderS, BorderLayout.WEST);
-		panVit.add(panSText, BorderLayout.EAST);
-		panSliderO.add(sliderOri);
-		panOText.add(sliderTextO);
-		panOri.add(panSliderO, BorderLayout.WEST);
-		panOri.add(panOText, BorderLayout.EAST);
-		frame.add(panVit, BorderLayout.NORTH);
-		frame.add(panOri, BorderLayout.SOUTH);
+		sliderSustentation = new JSlider();
+		sliderSustentation.setValue(0);
+		sliderSustentation.setMaximum(1);
+		sliderSustentation.addChangeListener(new ChangeListener()
+		{
+			private int transformDirToNumber(String text)
+		    {
+		        switch(text)
+		        {
+		        	case "OFF":
+		        		return 0;
+		        	case "ON":
+		        		return 1;
+		        	default:
+		        		return -1;
+		        }
+		    }
+			
+			@Override
+			public void stateChanged(final ChangeEvent arg0)
+			{
+				if(transformDirToNumber(labelSustentation.getText()) != sliderSustentation.getValue())
+					addToSend("st", sliderSustentation.getValue());
+				switch(sliderSustentation.getValue())
+				{
+					case 0:
+						labelSustentation.setText("OFF");
+					break;
+					case 1:
+						labelSustentation.setText("ON");
+					break;
+				}
+			}
+		});
+		panelSliderSpeed.add(sliderSpeed);
+		panelTextSpeed.add(labelSpeed);
+		panelSpeed.add(panelSliderSpeed, BorderLayout.WEST);
+		panelSpeed.add(panelTextSpeed, BorderLayout.EAST);
+		panelSliderOrientation.add(sliderOrientation);
+		panelTextOrientation.add(labelOrientation);
+		panelOrientation.add(panelSliderOrientation, BorderLayout.WEST);
+		panelOrientation.add(panelTextOrientation, BorderLayout.EAST);
+		panelSliderSustentation.add(sliderSustentation);
+		panelTextSustentation.add(labelSustentation);
+		panelSustentation.add(panelSliderSustentation, BorderLayout.WEST);
+		panelSustentation.add(panelTextSustentation, BorderLayout.EAST);
+		frame.add(panelSpeed, BorderLayout.NORTH);
+		frame.add(panelOrientation, BorderLayout.CENTER);
+		frame.add(panelSustentation, BorderLayout.SOUTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.pack();
 	}
 
-	private int transformDirToNumber(String text)
-    {
-        switch(text)
-        {
-        	case "Gauche":
-        		return 0;
-        	case "Devant":
-        		return 1;
-        	case "Droite":
-        		return 2;
-        	default:
-        		return -1;
-        }
-    }
-	
 	@Override
     public void keyPressed(KeyEvent e)
     {
+		/*
 		System.out.println(e.getExtendedKeyCode());
 		if(e.getExtendedKeyCode() == 37)
 		{
-			if(transformDirToNumber(sliderTextO.getText()) > 0)
+			if(transformDirToNumber(labelOrientation.getText()) > 0)
 			{
-				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) - 1);
-				addToSend("or", sliderOri.getValue());
-				switch(sliderOri.getValue())
+				sliderOrientation.setValue(transformDirToNumber(labelOrientation.getText()) - 1);
+				addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
 				{
 					case 0:
-						sliderTextO.setText("Gauche");
+						labelOrientation.setText("Gauche");
 					break;
 					case 1:
-						sliderTextO.setText("Devant");
+						labelOrientation.setText("Devant");
 					break;
 				}
 			}
 		}
 		else if(e.getExtendedKeyCode() == 39)
 		{
-			if(transformDirToNumber(sliderTextO.getText()) < 2)
+			if(transformDirToNumber(labelOrientation.getText()) < 2)
 			{
-				sliderOri.setValue(transformDirToNumber(sliderTextO.getText()) + 1);
-				addToSend("or", sliderOri.getValue());
-				switch(sliderOri.getValue())
+				sliderOrientation.setValue(transformDirToNumber(labelOrientation.getText()) + 1);
+				addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
 				{
 					case 1:
-						sliderTextO.setText("Devant");
+						labelOrientation.setText("Devant");
 					break;
 					case 2:
-						sliderTextO.setText("Droite");
+						labelOrientation.setText("Droite");
 					break;
 				}
 			}
 		}
 		else if(e.getExtendedKeyCode() == 38)
 		{
-			if(Integer.parseInt(sliderTextS.getText()) < 9225)
+			if(Integer.parseInt(labelSpeed.getText()) < 9225)
 			{
-				sliderSpeed.setValue(Integer.parseInt(sliderTextS.getText()) + 1);
-				sliderTextS.setText(String.valueOf(sliderSpeed.getValue()));
-				addToSend("or", sliderOri.getValue());
+				sliderSpeed.setValue(Integer.parseInt(labelSpeed.getText()) + 1);
+				labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
+				addToSend("or", sliderOrientation.getValue());
 			}
-		}
+		}*/
     }
 
 	@Override
@@ -231,13 +284,13 @@ public class Interface extends JFrame implements KeyListener
 	@Override
     public void keyTyped(KeyEvent e){}
 
-	public static Map<String, Integer> getReqs()
+	public static Map<String, Integer> getRequests()
     {
-	    return reqs;
+	    return requests;
     }
 
-	public static void setReqs(Map<String, Integer> reqs)
+	public static void setRequests(Map<String, Integer> requests)
     {
-	    Interface.reqs = reqs;
+	    Interface.requests = requests;
     }
 }
