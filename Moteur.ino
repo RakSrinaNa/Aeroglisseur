@@ -30,22 +30,25 @@ void receid(String key, int value)
     motor1.write(getSpeedToServo(value));
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
-
+    valvi=value
   }
   else if(key=="or")
   {
     Serial.print("On modifie l'orientation a ");
     Serial.println(value); 
+    valor=value
   }
   else if(key=="st")
   {
     if (value==1)
     {
+      valst=1;
       motor4.write(110);
       Serial.println("On  allume la sustentation");
     }
     else
     {
+      valst=0
       motor4.write(90);
       Serial.println("On  eteint la sustentation");
     }
@@ -60,18 +63,15 @@ int (sp,or,st);
 
 void spd(sp);
 {
-  get (sp);
-  return (value);
+  return (valvi);
 }
 void orient(or);
 {
-  get (or);
-  return (value);
+  return (valor);
 }
 void susten(st);
 {
-  get (st);
-  return (value);
+  return (valust);
 }
 
 String getTag(String s)
