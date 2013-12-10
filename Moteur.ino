@@ -56,6 +56,24 @@ void receid(String key, int value)
   }
 }
 
+int (sp,or,st);
+
+void spd(sp);
+{
+  get (sp);
+  return (value);
+}
+void orient(or);
+{
+  get (or);
+  return (value);
+}
+void susten(st);
+{
+  get (st);
+  return (value);
+}
+
 String getTag(String s)
 {
   return s.substring(s.indexOf('#') + 1, s.indexOf('='));
