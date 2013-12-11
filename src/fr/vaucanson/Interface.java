@@ -8,7 +8,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +24,7 @@ public class Interface extends JFrame implements KeyListener
 	private static final long serialVersionUID = 7231194594050358481L;
 	private static final int VERSION = 1;
 	private static JFrame frame;
+	private static Hashtable<Integer,JLabel> labelTableOrientation, labelTableSustentation, labelTableSpeed;
 	private static JSlider sliderSpeed, sliderOrientation, sliderSustentation;
 	private static JPanel panelSliderSpeed, panelTextSpeed, panelSpeed, panelSliderOrientation, panelTextOrientation, panelOrientation, panelSliderSustentation, panelTextSustentation, panelSustentation;
 	private static JLabel labelSpeed, labelOrientation, labelSustentation;
@@ -31,16 +34,27 @@ public class Interface extends JFrame implements KeyListener
 		System.out.println("Changing " + key + " to " + value);
 		requests.put(key, value);
 	}
-	
+
 	public Interface()
 	{
 		requests = new HashMap<String, Integer>();
 		requests.put("or", 5);
 		requests.put("vi", 0);
 		requests.put("st", 0);
+		labelTableOrientation = new Hashtable<Integer,JLabel>();
+		labelTableOrientation.put(0, new JLabel("Gauche"));
+		labelTableOrientation.put(1, new JLabel("Devant"));
+		labelTableOrientation.put(2, new JLabel("Droite"));
+		labelTableSustentation = new Hashtable<Integer,JLabel>();
+		labelTableSustentation.put(0, new JLabel("OFF"));
+		labelTableSustentation.put(1, new JLabel("ON"));
+		labelTableSpeed = new Hashtable<Integer,JLabel>();
+		labelTableSpeed.put(0, new JLabel("0"));
+		labelTableSpeed.put(4612, new JLabel("4612"));
+		labelTableSpeed.put(9225, new JLabel("9225"));
 		frame = new JFrame("Controleur de l'a\351roglisseur v" + VERSION);
 		frame.setLayout(new BorderLayout());
-		frame.setPreferredSize(new Dimension(570, 110));
+		frame.setPreferredSize(new Dimension(570, 200));
 		frame.setResizable(true);
 		frame.setAlwaysOnTop(true);
 		frame.setLayout(new BorderLayout());
@@ -98,10 +112,13 @@ public class Interface extends JFrame implements KeyListener
 		panelSliderSustentation.setPreferredSize(new Dimension(500, 30));
 		panelSpeed = new JPanel();
 		panelSpeed.setLayout(new BorderLayout());
+		panelSpeed.setPreferredSize(new Dimension(570, 66));
 		panelOrientation = new JPanel();
 		panelOrientation.setLayout(new BorderLayout());
+		panelOrientation.setPreferredSize(new Dimension(570, 66));
 		panelSustentation = new JPanel();
 		panelSustentation.setLayout(new BorderLayout());
+		panelSustentation.setPreferredSize(new Dimension(570, 66));
 		panelTextSpeed = new JPanel();
 		panelTextSpeed.setLayout(new BorderLayout());
 		panelTextSpeed.setBackground(Color.GREEN);
@@ -126,6 +143,8 @@ public class Interface extends JFrame implements KeyListener
 		sliderSpeed = new JSlider();
 		sliderSpeed.setValue(0);
 		sliderSpeed.setMaximum(9225);
+		sliderSpeed.setLabelTable(labelTableSpeed);
+		sliderSpeed.setPaintLabels(true);
 		sliderSpeed.addChangeListener(new ChangeListener()
 		{
 			@Override
@@ -138,38 +157,24 @@ public class Interface extends JFrame implements KeyListener
 		sliderOrientation = new JSlider();
 		sliderOrientation.setValue(1);
 		sliderOrientation.setMaximum(2);
+		sliderOrientation.setLabelTable(labelTableOrientation);
+		sliderOrientation.setPaintLabels(true);
 		sliderOrientation.addChangeListener(new ChangeListener()
 		{
-			private int transformDirToNumber(String text)
-		    {
-		        switch(text)
-		        {
-		        	case "Gauche":
-		        		return 0;
-		        	case "Devant":
-		        		return 1;
-		        	case "Droite":
-		        		return 2;
-		        	default:
-		        		return -1;
-		        }
-		    }
-			
 			@Override
 			public void stateChanged(final ChangeEvent arg0)
 			{
-				if(transformDirToNumber(labelOrientation.getText()) != sliderOrientation.getValue())
-					addToSend("or", sliderOrientation.getValue());
+				addToSend("or", sliderOrientation.getValue());
 				switch(sliderOrientation.getValue())
 				{
-					case 0:
-						labelOrientation.setText("Gauche");
+				case 0:
+					labelOrientation.setText("Gauche");
 					break;
-					case 1:
-						labelOrientation.setText("Devant");
+				case 1:
+					labelOrientation.setText("Devant");
 					break;
-					case 2:
-						labelOrientation.setText("Droite");
+				case 2:
+					labelOrientation.setText("Droite");
 					break;
 				}
 			}
@@ -177,33 +182,21 @@ public class Interface extends JFrame implements KeyListener
 		sliderSustentation = new JSlider();
 		sliderSustentation.setValue(0);
 		sliderSustentation.setMaximum(1);
+		sliderSustentation.setLabelTable(labelTableSustentation);
+		sliderSustentation.setPaintLabels(true);
 		sliderSustentation.addChangeListener(new ChangeListener()
 		{
-			private int transformDirToNumber(String text)
-		    {
-		        switch(text)
-		        {
-		        	case "OFF":
-		        		return 0;
-		        	case "ON":
-		        		return 1;
-		        	default:
-		        		return -1;
-		        }
-		    }
-			
 			@Override
 			public void stateChanged(final ChangeEvent arg0)
 			{
-				if(transformDirToNumber(labelSustentation.getText()) != sliderSustentation.getValue())
-					addToSend("st", sliderSustentation.getValue());
+				addToSend("st", sliderSustentation.getValue());
 				switch(sliderSustentation.getValue())
 				{
-					case 0:
-						labelSustentation.setText("OFF");
+				case 0:
+					labelSustentation.setText("OFF");
 					break;
-					case 1:
-						labelSustentation.setText("ON");
+				case 1:
+					labelSustentation.setText("ON");
 					break;
 				}
 			}
@@ -229,8 +222,8 @@ public class Interface extends JFrame implements KeyListener
 	}
 
 	@Override
-    public void keyPressed(KeyEvent e)
-    {
+	public void keyPressed(KeyEvent e)
+	{
 		/*
 		System.out.println(e.getExtendedKeyCode());
 		if(e.getExtendedKeyCode() == 37)
@@ -276,21 +269,21 @@ public class Interface extends JFrame implements KeyListener
 				addToSend("or", sliderOrientation.getValue());
 			}
 		}*/
-    }
+	}
 
 	@Override
-    public void keyReleased(KeyEvent e){}
+	public void keyReleased(KeyEvent e){}
 
 	@Override
-    public void keyTyped(KeyEvent e){}
+	public void keyTyped(KeyEvent e){}
 
 	public static Map<String, Integer> getRequests()
-    {
-	    return requests;
-    }
+	{
+		return requests;
+	}
 
 	public static void setRequests(Map<String, Integer> requests)
-    {
-	    Interface.requests = requests;
-    }
+	{
+		Interface.requests = requests;
+	}
 }
