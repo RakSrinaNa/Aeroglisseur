@@ -3,8 +3,8 @@
 
 Servo motor1;
 //Servo motor2;
-//Servo motor3;
-Servo motor4;
+Servo motor3;
+//Servo motor4;
 TKPotentiometer pot(I0);
 int valvi;
 int valor;
@@ -30,7 +30,7 @@ void receid(String key, int value)
   {
     Serial.print("On modifie la vitesse a ");
     Serial.print(value);
-    motor1.write(getSpeedToServo(value));
+    motor3.write(getSpeedToServo(value));
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
     valvi=value;
@@ -46,13 +46,13 @@ void receid(String key, int value)
     if (value==1)
     {
       valst=1;
-      motor4.write(110);
+      motor3.write(100);
       Serial.println("On  allume la sustentation");
     }
     else
     {
       valst=0;
-      motor4.write(90);
+      motor3.write(90);
       Serial.println("On  eteint la sustentation");
     }
   }
@@ -107,10 +107,12 @@ void decrypt(String inp)
 
 void setup()
 {
-  //motor3.attach(11); //Moteur 3 (Blanc) -> O0
+  motor3.attach(11); //Moteur 3 (Blanc) -> O0
   motor1.attach(10); //Moteur 1 (Rouge) -> O1
-  motor4.attach(9);  //Moteur 4 (Marron) -> O2
+  //motor4.attach(9);  //Moteur 4 (Marron) -> O2
   //motor2.attach(6); //Moteur 2 (Orange) -> O3 
+  motor1.write(90);
+  motor3.write(90);
   Serial.begin(9600);
   Serial.println("Debut du programme");
 }
