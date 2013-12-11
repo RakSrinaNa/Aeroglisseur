@@ -34,6 +34,7 @@ void receid(String key, int value)
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
     valvi=value;
+    valvi<=10000
   }
   else if(key=="or")
   {
@@ -130,5 +131,5 @@ void loop()
     Serial.println(inString);
     decrypt(inString);
   }
-  delay(1000);
+  delay(500);
 }
