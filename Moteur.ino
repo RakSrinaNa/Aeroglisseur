@@ -81,28 +81,19 @@ int getSpd()
 {
   return valvi;
 }
+
 int getOri()
 {
   return valor;
 }
+
 int getSus()
 {
   return valst;
 }
-
-String getTag(String s)
-{
-  return s.substring(s.indexOf('#') + 1, s.indexOf('='));
-}
-
-int getValue(String s)
-{
-  return s.substring(s.indexOf('=') + 1).toInt();
-}
-
 void decrypt(String inp)
 {
-    receid(getTag(inp), getValue(inp)); 
+    receid(imp.substring(imp.indexOf('#') + 1, imp.indexOf('=')), imp.substring(imp.indexOf('=') + 1).toInt()); 
 }
 
 void setup()
