@@ -30,7 +30,7 @@ void receid(String key, int value)
   {
     Serial.print("On modifie la vitesse a ");
     Serial.print(value);
-    motor3.write(getSpeedToServo(value));
+    motor1.write(getSpeedToServo(value));
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
     valvi=value;
@@ -108,8 +108,8 @@ void decrypt(String inp)
 void setup()
 {
   motor3.attach(11); //Moteur 3 (Blanc) -> O0
-  motor1.attach(10); //Moteur 1 (Rouge) -> O1
-  //motor4.attach(9);  //Moteur 4 (Marron) -> O2
+  motor1.attach(10); //Moteur 4 (Marron) -> O1
+  //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
   //motor2.attach(6); //Moteur 2 (Orange) -> O3 
   motor1.write(90);
   motor3.write(90);
