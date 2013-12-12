@@ -178,15 +178,15 @@ public class Interface extends JFrame implements KeyListener
 				addToSend("or", sliderOrientation.getValue());
 				switch(sliderOrientation.getValue())
 				{
-				case 0:
-					labelOrientation.setText("Gauche");
-					break;
-				case 1:
-					labelOrientation.setText("Devant");
-					break;
-				case 2:
-					labelOrientation.setText("Droite");
-					break;
+					case 0:
+						labelOrientation.setText("Gauche");
+						break;
+					case 1:
+						labelOrientation.setText("Devant");
+						break;
+					case 2:
+						labelOrientation.setText("Droite");
+						break;
 				}
 			}
 		});
@@ -204,14 +204,14 @@ public class Interface extends JFrame implements KeyListener
 				addToSend("st", sliderSustentation.getValue());
 				switch(sliderSustentation.getValue())
 				{
-				case 0:
-					labelSustentation.setText("OFF");
-					panelTextSustentation.setBackground(Color.RED);
-					break;
-				case 1:
-					labelSustentation.setText("ON");
-					panelTextSustentation.setBackground(Color.GREEN);
-					break;
+					case 0:
+						labelSustentation.setText("OFF");
+						panelTextSustentation.setBackground(Color.RED);
+						break;
+					case 1:
+						labelSustentation.setText("ON");
+						panelTextSustentation.setBackground(Color.GREEN);
+						break;
 				}
 			}
 		});
@@ -245,9 +245,77 @@ public class Interface extends JFrame implements KeyListener
 		Interface.requests = requests;
 	}
 
+	public static void changeValue(String key, int value)
+	{
+		if(key.equals("or"))
+		{
+			if(value > 1 || value < -1)
+				return;
+			if(sliderOrientation.getValue() > 0 && value < 0)
+			{
+				sliderOrientation.setValue(sliderOrientation.getValue() + value);
+				addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
+				{
+					case 0:
+						labelOrientation.setText("Gauche");
+						break;
+					case 1:
+						labelOrientation.setText("Devant");
+						break;
+					case 2:
+						labelOrientation.setText("Droite");
+						break;
+				}
+			}
+			else if(sliderOrientation.getValue() < 2 && value > 0)
+			{
+				sliderOrientation.setValue(sliderOrientation.getValue() + value);
+				addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
+				{
+					case 0:
+						labelOrientation.setText("Gauche");
+						break;
+					case 1:
+						labelOrientation.setText("Devant");
+						break;
+					case 2:
+						labelOrientation.setText("Droite");
+						break;
+				}
+			}
+		}
+		else if(key.equals("vi"))
+		{
+			if(value > 0)
+				sliderSpeed.setValue(sliderSpeed.getValue() < (9225 - value) ? sliderSpeed.getValue() + value : 9225);
+			else if(value < 0)
+				sliderSpeed.setValue(sliderSpeed.getValue() > value ? sliderSpeed.getValue() + value : 0);
+			labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
+			addToSend("or", sliderOrientation.getValue());
+		}
+		else if(key.equals("st"))
+		{
+			sliderSustentation.setValue(sliderSustentation.getValue() == 0 ? 1 : 0);
+			addToSend("st", sliderSustentation.getValue());
+			switch(sliderSustentation.getValue())
+			{
+				case 0:
+					labelSustentation.setText("OFF");
+					panelTextSustentation.setBackground(Color.RED);
+					break;
+				case 1:
+					labelSustentation.setText("ON");
+					panelTextSustentation.setBackground(Color.GREEN);
+					break;
+			}
+		}
+	}
+
 	@Override
-    public void keyPressed(KeyEvent e)
-    {
+	public void keyPressed(KeyEvent e)
+	{
 		//System.out.println(e.getExtendedKeyCode());
 		if(e.getExtendedKeyCode() == 37)
 		{
@@ -257,15 +325,15 @@ public class Interface extends JFrame implements KeyListener
 				addToSend("or", sliderOrientation.getValue());
 				switch(sliderOrientation.getValue())
 				{
-				case 0:
-					labelOrientation.setText("Gauche");
-					break;
-				case 1:
-					labelOrientation.setText("Devant");
-					break;
-				case 2:
-					labelOrientation.setText("Droite");
-					break;
+					case 0:
+						labelOrientation.setText("Gauche");
+						break;
+					case 1:
+						labelOrientation.setText("Devant");
+						break;
+					case 2:
+						labelOrientation.setText("Droite");
+						break;
 				}
 			}
 		}
@@ -277,15 +345,15 @@ public class Interface extends JFrame implements KeyListener
 				addToSend("or", sliderOrientation.getValue());
 				switch(sliderOrientation.getValue())
 				{
-				case 0:
-					labelOrientation.setText("Gauche");
-					break;
-				case 1:
-					labelOrientation.setText("Devant");
-					break;
-				case 2:
-					labelOrientation.setText("Droite");
-					break;
+					case 0:
+						labelOrientation.setText("Gauche");
+						break;
+					case 1:
+						labelOrientation.setText("Devant");
+						break;
+					case 2:
+						labelOrientation.setText("Droite");
+						break;
 				}
 			}
 		}
@@ -307,22 +375,22 @@ public class Interface extends JFrame implements KeyListener
 			addToSend("st", sliderSustentation.getValue());
 			switch(sliderSustentation.getValue())
 			{
-			case 0:
-				labelSustentation.setText("OFF");
-				panelTextSustentation.setBackground(Color.RED);
-				break;
-			case 1:
-				labelSustentation.setText("ON");
-				panelTextSustentation.setBackground(Color.GREEN);
-				break;
+				case 0:
+					labelSustentation.setText("OFF");
+					panelTextSustentation.setBackground(Color.RED);
+					break;
+				case 1:
+					labelSustentation.setText("ON");
+					panelTextSustentation.setBackground(Color.GREEN);
+					break;
 			}
 		}
-    }
-	    
+	}
+
 
 	@Override
-    public void keyReleased(KeyEvent e){}
+	public void keyReleased(KeyEvent e){}
 
 	@Override
-    public void keyTyped(KeyEvent e){}
+	public void keyTyped(KeyEvent e){}
 }

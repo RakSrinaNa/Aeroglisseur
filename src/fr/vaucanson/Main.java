@@ -11,6 +11,7 @@ public class Main
 {
 	public static Sender sender;
 	public static Logger logger;
+	public static GamepadHandler gamepad;
 	
 	public static void main(String[] args) throws SecurityException, IOException
 	{
@@ -42,5 +43,7 @@ public class Main
             		f.dispose();
             }
 		}
+		gamepad = new GamepadHandler();
+		gamepad.run();
 	}
 }
