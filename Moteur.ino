@@ -34,7 +34,10 @@ void receid(String key, int value)
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
     valvi=value;
-    valvi<=10000
+    if(valvi >= 10000)
+    {
+      //Faire quelque chose à la valeur...
+    }
   }
   else if(key=="or")
   {
