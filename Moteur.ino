@@ -34,7 +34,12 @@ void receid(String key, int value)
     Serial.print(" soit ");
     Serial.println(getSpeedToServo(value));
     valvi=value;
-    valvi<=10000
+    if(valvi >= 10000)
+    {
+      valvi=0;
+      motor1.write(90);
+      pritnln("error in value vitesse,restart systeme");
+    }
   }
   else if(key=="or")
   {
