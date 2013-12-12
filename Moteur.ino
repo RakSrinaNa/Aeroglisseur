@@ -36,7 +36,9 @@ void receid(String key, int value)
     valvi=value;
     if(valvi >= 10000)
     {
-      //Faire quelque chose à la valeur...
+      valvi=0;
+      motor1.write(90);
+      pritnln("error in value vitesse,restart systeme");
     }
   }
   else if(key=="or")
