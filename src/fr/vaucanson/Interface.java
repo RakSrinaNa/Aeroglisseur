@@ -10,7 +10,7 @@ import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-
+import java.util.logging.Level;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,7 +22,7 @@ public class Interface extends JFrame implements KeyListener
 {
 	private static Map<String, Integer> requests;
 	private static final long serialVersionUID = 7231194594050358481L;
-	private static final int VERSION = 1;
+	private static final int VERSION = 1, stepSliderSpeed = 250;
 	private static JFrame frame;
 	private static Hashtable<Integer,JLabel> labelTableOrientation, labelTableSustentation, labelTableSpeed;
 	private static JSlider sliderSpeed, sliderOrientation, sliderSustentation;
@@ -31,7 +31,7 @@ public class Interface extends JFrame implements KeyListener
 
 	synchronized public static void addToSend(final String key, final int value)
 	{
-		System.out.println("Changing " + key + " to " + value);
+		Main.logger.log(Level.FINEST, "Changing " + key + " to " + value);
 		requests.put(key, value);
 	}
 
@@ -100,51 +100,61 @@ public class Interface extends JFrame implements KeyListener
 		});
 		panelSliderSpeed = new JPanel();
 		panelSliderSpeed.setLayout(new BorderLayout());
-		panelSliderSpeed.setBackground(Color.ORANGE);
 		panelSliderSpeed.setPreferredSize(new Dimension(500, 30));
+		panelSliderSpeed.setFocusable(false);
 		panelSliderOrientation = new JPanel();
 		panelSliderOrientation.setLayout(new BorderLayout());
-		panelSliderOrientation.setBackground(Color.ORANGE);
 		panelSliderOrientation.setPreferredSize(new Dimension(500, 30));
+		panelSliderOrientation.setFocusable(false);
 		panelSliderSustentation = new JPanel();
 		panelSliderSustentation.setLayout(new BorderLayout());
-		panelSliderSustentation.setBackground(Color.ORANGE);
 		panelSliderSustentation.setPreferredSize(new Dimension(500, 30));
+		panelSliderSustentation.setFocusable(false);
 		panelSpeed = new JPanel();
 		panelSpeed.setLayout(new BorderLayout());
 		panelSpeed.setPreferredSize(new Dimension(570, 66));
+		panelSpeed.setFocusable(false);
 		panelOrientation = new JPanel();
 		panelOrientation.setLayout(new BorderLayout());
 		panelOrientation.setPreferredSize(new Dimension(570, 66));
+		panelOrientation.setFocusable(false);
 		panelSustentation = new JPanel();
 		panelSustentation.setLayout(new BorderLayout());
 		panelSustentation.setPreferredSize(new Dimension(570, 66));
+		panelSustentation.setFocusable(false);
 		panelTextSpeed = new JPanel();
 		panelTextSpeed.setLayout(new BorderLayout());
 		panelTextSpeed.setBackground(Color.GREEN);
 		panelTextSpeed.setPreferredSize(new Dimension(50, 5));
+		panelTextSpeed.setFocusable(false);
 		panelTextOrientation = new JPanel();
 		panelTextOrientation.setLayout(new BorderLayout());
 		panelTextOrientation.setBackground(Color.GREEN);
 		panelTextOrientation.setPreferredSize(new Dimension(50, 5));
+		panelTextOrientation.setFocusable(false);
 		panelTextSustentation = new JPanel();
 		panelTextSustentation.setLayout(new BorderLayout());
-		panelTextSustentation.setBackground(Color.GREEN);
+		panelTextSustentation.setBackground(Color.RED);
 		panelTextSustentation.setPreferredSize(new Dimension(50, 5));
+		panelTextSustentation.setFocusable(false);
 		labelSpeed = new JLabel();
 		labelSpeed.setBackground(Color.GRAY);
 		labelSpeed.setText("0");
+		labelSpeed.setFocusable(false);
 		labelOrientation = new JLabel();
 		labelOrientation.setBackground(Color.GRAY);
 		labelOrientation.setText("Devant");
+		labelOrientation.setFocusable(false);
 		labelSustentation = new JLabel();
 		labelSustentation.setBackground(Color.GRAY);
 		labelSustentation.setText("OFF");
+		labelSustentation.setFocusable(false);
 		sliderSpeed = new JSlider();
 		sliderSpeed.setValue(0);
 		sliderSpeed.setMaximum(9225);
 		sliderSpeed.setLabelTable(labelTableSpeed);
 		sliderSpeed.setPaintLabels(true);
+		sliderSpeed.setFocusable(false);;
 		sliderSpeed.addChangeListener(new ChangeListener()
 		{
 			@Override
@@ -159,6 +169,7 @@ public class Interface extends JFrame implements KeyListener
 		sliderOrientation.setMaximum(2);
 		sliderOrientation.setLabelTable(labelTableOrientation);
 		sliderOrientation.setPaintLabels(true);
+		sliderOrientation.setFocusable(false);
 		sliderOrientation.addChangeListener(new ChangeListener()
 		{
 			@Override
@@ -184,6 +195,7 @@ public class Interface extends JFrame implements KeyListener
 		sliderSustentation.setMaximum(1);
 		sliderSustentation.setLabelTable(labelTableSustentation);
 		sliderSustentation.setPaintLabels(true);
+		sliderSustentation.setFocusable(false);
 		sliderSustentation.addChangeListener(new ChangeListener()
 		{
 			@Override
@@ -194,9 +206,11 @@ public class Interface extends JFrame implements KeyListener
 				{
 				case 0:
 					labelSustentation.setText("OFF");
+					panelTextSustentation.setBackground(Color.RED);
 					break;
 				case 1:
 					labelSustentation.setText("ON");
+					panelTextSustentation.setBackground(Color.GREEN);
 					break;
 				}
 			}
@@ -221,62 +235,6 @@ public class Interface extends JFrame implements KeyListener
 		frame.pack();
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e)
-	{
-		/*
-		System.out.println(e.getExtendedKeyCode());
-		if(e.getExtendedKeyCode() == 37)
-		{
-			if(transformDirToNumber(labelOrientation.getText()) > 0)
-			{
-				sliderOrientation.setValue(transformDirToNumber(labelOrientation.getText()) - 1);
-				addToSend("or", sliderOrientation.getValue());
-				switch(sliderOrientation.getValue())
-				{
-					case 0:
-						labelOrientation.setText("Gauche");
-					break;
-					case 1:
-						labelOrientation.setText("Devant");
-					break;
-				}
-			}
-		}
-		else if(e.getExtendedKeyCode() == 39)
-		{
-			if(transformDirToNumber(labelOrientation.getText()) < 2)
-			{
-				sliderOrientation.setValue(transformDirToNumber(labelOrientation.getText()) + 1);
-				addToSend("or", sliderOrientation.getValue());
-				switch(sliderOrientation.getValue())
-				{
-					case 1:
-						labelOrientation.setText("Devant");
-					break;
-					case 2:
-						labelOrientation.setText("Droite");
-					break;
-				}
-			}
-		}
-		else if(e.getExtendedKeyCode() == 38)
-		{
-			if(Integer.parseInt(labelSpeed.getText()) < 9225)
-			{
-				sliderSpeed.setValue(Integer.parseInt(labelSpeed.getText()) + 1);
-				labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
-				addToSend("or", sliderOrientation.getValue());
-			}
-		}*/
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e){}
-
-	@Override
-	public void keyTyped(KeyEvent e){}
-
 	public static Map<String, Integer> getRequests()
 	{
 		return requests;
@@ -286,4 +244,85 @@ public class Interface extends JFrame implements KeyListener
 	{
 		Interface.requests = requests;
 	}
+
+	@Override
+    public void keyPressed(KeyEvent e)
+    {
+		//System.out.println(e.getExtendedKeyCode());
+		if(e.getExtendedKeyCode() == 37)
+		{
+			if(sliderOrientation.getValue() > 0)
+			{
+				sliderOrientation.setValue(sliderOrientation.getValue() - 1);
+				addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
+				{
+				case 0:
+					labelOrientation.setText("Gauche");
+					break;
+				case 1:
+					labelOrientation.setText("Devant");
+					break;
+				case 2:
+					labelOrientation.setText("Droite");
+					break;
+				}
+			}
+		}
+		else if(e.getExtendedKeyCode() == 39)
+		{
+			if(sliderOrientation.getValue() < 2)
+			{
+				sliderOrientation.setValue(sliderOrientation.getValue() + 1);
+				addToSend("or", sliderOrientation.getValue());
+				switch(sliderOrientation.getValue())
+				{
+				case 0:
+					labelOrientation.setText("Gauche");
+					break;
+				case 1:
+					labelOrientation.setText("Devant");
+					break;
+				case 2:
+					labelOrientation.setText("Droite");
+					break;
+				}
+			}
+		}
+		else if(e.getExtendedKeyCode() == 38)
+		{
+			sliderSpeed.setValue(sliderSpeed.getValue() < (9225 - stepSliderSpeed) ? sliderSpeed.getValue() + stepSliderSpeed : 9225);
+			labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
+			addToSend("or", sliderOrientation.getValue());
+		}
+		else if(e.getExtendedKeyCode() == 40)
+		{
+			sliderSpeed.setValue(sliderSpeed.getValue() >= stepSliderSpeed ? sliderSpeed.getValue() - stepSliderSpeed : 0);
+			labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
+			addToSend("or", sliderOrientation.getValue());
+		}
+		else if(e.getExtendedKeyCode() == 17)
+		{
+			sliderSustentation.setValue(sliderSustentation.getValue() == 0 ? 1 : 0);
+			addToSend("st", sliderSustentation.getValue());
+			switch(sliderSustentation.getValue())
+			{
+			case 0:
+				labelSustentation.setText("OFF");
+				panelTextSustentation.setBackground(Color.RED);
+				break;
+			case 1:
+				labelSustentation.setText("ON");
+				panelTextSustentation.setBackground(Color.GREEN);
+				break;
+			}
+		}
+    }
+	    
+
+	@Override
+    public void keyReleased(KeyEvent e){}
+
+	@Override
+    public void keyTyped(KeyEvent e){}
 }

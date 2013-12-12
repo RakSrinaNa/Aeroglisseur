@@ -9,32 +9,33 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Sender extends Thread
 {
-	public final static String IP_PING = "127.0.0.1";//"www.mrcraftcod.fr";
-	private final static String IP_URL = "http://127.0.0.1/PI/index.html";//"http://www.mrcraftcod.fr/PI/index.php";
+	public static String IP_PING;
+	private static String IP_URL;
 	private static Map<String, Integer> requestsSended;
 	private static final String[] keys = {"or", "st", "vi"};
 
 	private static boolean init() throws Exception
 	{
-		System.out.println("Initializing sender...");
+		Main.logger.log(Level.INFO, "Initializing sender...");
 		final InetAddress inet = InetAddress.getByName(IP_PING);
 		if(inet.isReachable(5000))
 			return true;
-		System.out.println("Proxy ins needed, configuring it");
+		Main.logger.log(Level.WARNING, "Proxy is needed, configuring it");
 		System.setProperty("http.proxyHost", "proxy");
 		System.setProperty("http.proxyPort", "8080");
 		if(inet.isReachable(5000))
 			return true;
-		throw new Exception("Couldn't connect to the server!");
+		throw new Exception();
 	}
 
 	synchronized private static String send(final String key, final int value)
 	{
 		final String urlParameters = key + "=" + value;
-		System.out.println("Envoi de la requete : #" + urlParameters);
+		Main.logger.log(Level.FINE, "Envoi de la requete : #" + urlParameters);
 		URL url;
 		HttpURLConnection connection = null;
 		try
@@ -77,43 +78,33 @@ public class Sender extends Thread
 		}
 	}
 
-	public Sender()
+	public Sender(String IP1, String IP2) throws Exception
 	{
-		System.out.println("Creating sender...");
+		this.IP_PING = IP1;
+		this.IP_URL = IP2;
+		Main.logger.log(Level.INFO, "Creating sender...");
 		setName("Sender");
 		requestsSended = new HashMap<String, Integer>();
 		requestsSended.put("or", 5);
 		requestsSended.put("vi", 0);
 		requestsSended.put("st", 0);
-		System.out.println("Sender created!");
+		init();
+		Main.logger.log(Level.INFO, "Sender initialized on " + IP_PING + " sending requests to " + IP_URL + "!");
 	}
 
 	@Override
 	public void run()
 	{
-		try
-		{
-			init();
-			System.out.println("Sender initialized!");
-		}
-		catch(final Exception e)
-		{
-			e.printStackTrace();
-			return;
-		}
 		while(!Thread.interrupted())
 		{
 			try
 			{
 				Thread.sleep(50);
 			}
-			catch(final Exception e)
-			{
-				e.printStackTrace();
-			}
+			catch(final Exception e){}
 			for(final String key : keys)
 				if(Interface.getRequests().get(key) != requestsSended.get(key))
-					System.out.println(Outils.decrypt(send(key, Interface.getRequests().get(key))));
+					Main.logger.log(Level.FINER, "Recieving response from server: " + Outils.decrypt(send(key, Interface.getRequests().get(key))));
 		}
 	}
 }
