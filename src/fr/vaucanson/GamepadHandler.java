@@ -74,7 +74,7 @@ public class GamepadHandler extends Thread
 			if(controller.getAxisValue(2) != 0)
 				Interface.changeValue("vi", (int)(-250 * controller.getAxisValue(2)));
 			if(controller.getAxisValue(1) != 0)
-				Interface.changeValue("or", (int)controller.getAxisValue(1));
+				Interface.changeValue("or", (int)(5 * controller.getAxisValue(1)));
 			if(povStatus.containsKey(0))
 				if(povStatus.get(0) != controller.getPovX())
 				{
@@ -119,6 +119,7 @@ public class GamepadHandler extends Thread
 			if(controller.getName().contains("Gamepad F310"))
 				break;
 		}
+		System.out.println("Controller: " + controller.getName());
 		while(controller.getAxisValue(0) != 0 || controller.getAxisValue(1) != 0 || controller.getAxisValue(2) != 0 || controller.getAxisValue(3) != 0)
 			controller.poll();
 		buttonsPressed = new HashMap<Integer, Boolean>();
