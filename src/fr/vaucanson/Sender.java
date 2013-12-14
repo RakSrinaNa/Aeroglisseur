@@ -1,8 +1,6 @@
 package fr.vaucanson;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -32,50 +30,22 @@ public class Sender extends Thread
 		throw new Exception();
 	}
 
-	synchronized private static String send(final String key, final int value)
+	synchronized private String sendGet(String params) throws Exception
 	{
-		final String urlParameters = key + "=" + value;
-		Main.logger.log(Level.FINE, "Envoi de la requete : #" + urlParameters);
-		URL url;
-		HttpURLConnection connection = null;
-		try
-		{
-			url = new URL(IP_URL);
-			connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
-			connection.setRequestProperty("Content-Language", "fr-FR");
-			connection.setUseCaches(false);
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
-			final DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-			writer.writeBytes(urlParameters);
-			writer.flush();
-			writer.close();
-			final InputStream is = connection.getInputStream();
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-			String line;
-			final StringBuffer response = new StringBuffer();
-			while((line = reader.readLine()) != null)
-			{
-				response.append(line);
-				response.append('\r');
-			}
-			reader.close();
-			requestsSended.put(key, Interface.getRequests().get(key));
-			return response.toString().contains("Parse error: syntax error") ? "Error" : response.toString().replace("﻿ ", "").replace("﻿", "").replace("<br />", "\n").replace("</p>", "").replace("<p>", "");
-		}
-		catch(final Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		finally
-		{
-			if(connection != null)
-				connection.disconnect();
-		}
+		URL url = new URL(IP_URL + "?" + params);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+		con.setRequestProperty("User-Agent", "Mozilla/5.0");
+		int responseCode = con.getResponseCode();
+		System.out.println("\nSending 'GET' request to URL : " + url);
+		System.out.println("Response Code : " + responseCode);
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+		while((inputLine = in.readLine()) != null)
+			response.append(inputLine);
+		in.close();
+		return response.toString();
 	}
 
 	public Sender(String IP1, String IP2) throws Exception
@@ -85,14 +55,15 @@ public class Sender extends Thread
 		Main.logger.log(Level.INFO, "Creating sender...");
 		setName("Sender");
 		requestsSended = new HashMap<String, Integer>();
-		requestsSended.put("or", 5);
+		requestsSended.put("or", 50);
 		requestsSended.put("vi", 0);
 		requestsSended.put("st", 0);
 		init();
 		Main.logger.log(Level.INFO, "Sender initialized on " + IP_PING + " sending requests to " + IP_URL + "!");
 	}
 
-	@Override
+	@SuppressWarnings("cast")
+    @Override
 	public void run()
 	{
 		while(!Thread.interrupted())
@@ -103,8 +74,19 @@ public class Sender extends Thread
 			}
 			catch(final Exception e){}
 			for(final String key : keys)
-				if(Interface.getRequests().get(key) != requestsSended.get(key))
-					Main.logger.log(Level.FINER, "Recieving response from server: " + Outils.decrypt(send(key, Interface.getRequests().get(key))));
+				if((int)Interface.getRequests().get(key) != (int)requestsSended.get(key))
+				{
+					try
+					{
+						int value = Interface.getRequests().get(key);
+						sendGet(key + "=" + value);
+						requestsSended.put(key, value);
+					}
+					catch(Exception e)
+		            {
+			            Main.logger.log(Level.WARNING, "Error when contacting Arduino!", e);
+		            }
+				}
 		}
 	}
 }

@@ -24,7 +24,7 @@ public class Interface extends JFrame implements KeyListener
 	private static final long serialVersionUID = 7231194594050358481L;
 	private static final int VERSION = 1, stepSliderSpeed = 250;
 	private static JFrame frame;
-	private static Hashtable<Integer,JLabel> labelTableOrientation, labelTableSustentation, labelTableSpeed;
+	private static Hashtable<Integer, JLabel> labelTableOrientation, labelTableSustentation, labelTableSpeed;
 	private static JSlider sliderSpeed, sliderOrientation, sliderSustentation;
 	private static JPanel panelSliderSpeed, panelTextSpeed, panelSpeed, panelSliderOrientation, panelTextOrientation, panelOrientation, panelSliderSustentation, panelTextSustentation, panelSustentation;
 	private static JLabel labelSpeed, labelOrientation, labelSustentation;
@@ -38,7 +38,7 @@ public class Interface extends JFrame implements KeyListener
 	public Interface()
 	{
 		requests = new HashMap<String, Integer>();
-		requests.put("or", 5);
+		requests.put("or", 50);
 		requests.put("vi", 0);
 		requests.put("st", 0);
 		labelTableOrientation = new Hashtable<Integer,JLabel>();
@@ -154,15 +154,13 @@ public class Interface extends JFrame implements KeyListener
 		sliderSpeed.setMaximum(9225);
 		sliderSpeed.setLabelTable(labelTableSpeed);
 		sliderSpeed.setPaintLabels(true);
-		sliderSpeed.setFocusable(false);;
+		sliderSpeed.setFocusable(false);
 		sliderSpeed.addChangeListener(new ChangeListener()
 		{
 			@Override
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				changeValue("vi", 0);
-				//addToSend("vi", sliderSpeed.getValue());
-				//labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
 			}
 		});
 		sliderOrientation = new JSlider();
@@ -177,8 +175,6 @@ public class Interface extends JFrame implements KeyListener
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				changeValue("or", 0);
-				//addToSend("or", sliderOrientation.getValue());
-				//labelOrientation.setText(String.valueOf(sliderOrientation.getValue()));
 			}
 		});
 		sliderSustentation = new JSlider();
@@ -193,18 +189,6 @@ public class Interface extends JFrame implements KeyListener
 			public void stateChanged(final ChangeEvent arg0)
 			{
 				changeValue("st", 0);
-				/*addToSend("st", sliderSustentation.getValue());
-				switch(sliderSustentation.getValue())
-				{
-					case 0:
-						labelSustentation.setText("OFF");
-						panelTextSustentation.setBackground(Color.RED);
-						break;
-					case 1:
-						labelSustentation.setText("ON");
-						panelTextSustentation.setBackground(Color.GREEN);
-						break;
-				}*/
 			}
 		});
 		panelSliderSpeed.add(sliderSpeed);
@@ -249,11 +233,11 @@ public class Interface extends JFrame implements KeyListener
 		{
 			sliderSpeed.setValue(sliderSpeed.getValue() + value);
 			labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
-			addToSend("or", sliderOrientation.getValue());
+			addToSend("vi", sliderSpeed.getValue());
 		}
 		else if(key.equals("st"))
 		{
-			sliderSustentation.setValue(sliderSustentation.getValue() == 0 ? 1 : 0);
+			sliderSustentation.setValue(value == -1 ? sliderSustentation.getValue() == 1 ? 0 : 1 : sliderSustentation.getValue());
 			addToSend("st", sliderSustentation.getValue());
 			switch(sliderSustentation.getValue())
 			{

@@ -25,7 +25,7 @@ public class Main
 		new Interface();
 		try
 		{
-			sender = new Sender("www.mrcraftcod.fr", "http://www.mrcraftcod.fr/PI/index.php");
+			sender = new Sender("192.168.0.18", "http://192.168.0.18/sd/index.php");
 			sender.start();
 		}
 		catch(Exception e)

@@ -2,6 +2,7 @@ package fr.vaucanson;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -12,10 +13,7 @@ public class GamepadHandler extends Thread
 	private static Map<Integer, Boolean> buttonsPressed;
 	private static Map<Integer, Float> axisStatus, povStatus;
 	
-	public GamepadHandler() 
-	{
-		init();
-	}
+	public GamepadHandler() {}
 	
 	/**
 	 * BUTTONS:
@@ -49,7 +47,15 @@ public class GamepadHandler extends Thread
 	@Override
 	public void run()
 	{
-		init();
+		try
+        {
+	        init();
+	        Thread.sleep(450);
+        }
+        catch(Exception e1)
+        {
+        	return;
+        }
 		while(!Thread.interrupted())
 		{
 			try
@@ -65,7 +71,7 @@ public class GamepadHandler extends Thread
 				if(buttonsPressed.get(i) != controller.isButtonPressed(i))
 				{
 					if(i == 0 && controller.isButtonPressed(i))
-						Interface.changeValue("st", 0);
+						Interface.changeValue("st", -1);
 					System.out.println("Button " + i + " changed to " + controller.isButtonPressed(i));
 				}
 			for(int i = 0; i < axisStatus.size(); i++)
@@ -102,8 +108,9 @@ public class GamepadHandler extends Thread
 		}
 	}
 	
-	private static void init()
+	private static void init() throws Exception
 	{
+		Main.logger.log(Level.INFO, "Setting Gamepad Controller...");
 		try
         {
 	        Controllers.create();
@@ -119,12 +126,17 @@ public class GamepadHandler extends Thread
 			if(controller.getName().contains("Gamepad F310"))
 				break;
 		}
-		System.out.println("Controller: " + controller.getName());
+		if(controller.equals(null))
+			throw new Exception();
+		Main.logger.log(Level.FINE, "Controller: " + controller.getName() + "\tAxis: " + controller.getAxisCount() + "\tButtons: " + controller.getButtonCount());
+		Main.logger.log(Level.FINE, "Waiting for joysticks to be set to the middle...");
 		while(controller.getAxisValue(0) != 0 || controller.getAxisValue(1) != 0 || controller.getAxisValue(2) != 0 || controller.getAxisValue(3) != 0)
 			controller.poll();
+		Main.logger.log(Level.FINE, "Joysticks OK");
 		buttonsPressed = new HashMap<Integer, Boolean>();
 		axisStatus = new HashMap<Integer, Float>();
 		povStatus = new HashMap<Integer, Float>();
+		Main.logger.log(Level.INFO, "Gamepad Controller OK!");
 	}
 
 	public static Controller getController()
