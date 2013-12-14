@@ -1,131 +1,135 @@
-#include <Servo.h>
-#include <TinkerKit.h>
-
-Servo motor1;
-//Servo motor2;
-Servo motor3;
-//Servo motor4;
-TKPotentiometer pot(I0);
-int valvi;
-int valor;
-int valst;
-
-int getSpeedToServo(unsigned int spd)
-{
-  if(spd == 0)
+  #include <Servo.h>
+  #include <TinkerKit.h>
+  #include <Time.h>
+  #include <FileIO.h>
+  #include <Bridge.h>
+  
+  Servo motor1;
+  //Servo motor2;
+  Servo motor3;
+  //Servo motor4;
+  TKPotentiometer pot(I0);
+  int valvi;
+  int valor;
+  int valst;
+  
+  void afficherMessage(String message)
   {
-    return 90;  
+     Serial.println(String(hour()) + ":" + String(minute()) + ":" + String(second()) + ":" + String(millis()) + " -> " + message); 
   }
-  return (119 + (int)(spd/151.22));
-}
-
-void receid(String key, int value)
-{
-  if(value < 0 || value > 10000)
+  int getSpeedToServo(unsigned int spd)
   {
-     Serial.println("La valeur voulue n'est pas dans l'encadrement possible!");
-    return; 
-  }
-  if(key=="vi")
-  {
-    Serial.print("On modifie la vitesse a ");
-    Serial.print(value);
-    motor1.write(getSpeedToServo(value));
-    Serial.print(" soit ");
-    Serial.println(getSpeedToServo(value));
-    valvi=value;
-    if(valvi >= 10000)
+    if (spd == 0)
     {
-      valvi=0;
-      motor1.write(90);
-      pritnln("error in value vitesse,restart systeme");
+      return 90;
     }
+    return (119 + (int)(spd / 151.22));
   }
-  else if(key=="or")
+  
+  void receid(String key, int value)
   {
-    Serial.print("On modifie l'orientation a ");
-    Serial.println(value); 
-    valor=value;
-  }
-  else if(key=="st")
-  {
-    if (value==1)
+    if(value < 0 || value > 10000 || (key == "or" && value == valor) || (key == "vi" && value == valvi) || (key == "st" && value == valst))
     {
-      valst=1;
-      motor3.write(100);
-      Serial.println("On  allume la sustentation");
+      return;
+    }
+    afficherMessage("Recieving key " + key + " with value " + value);
+    if(key == "vi")
+    {
+      afficherMessage("On modifie la vitesse a " + String(value) + "soit" + String(getSpeedToServo(value)));
+      motor1.write(getSpeedToServo(value));
+      valvi = value;
+    }
+    else if (key == "or")
+    {
+      afficherMessage("On modifie l'orientation a " + String(value));
+      valor = value;
+    }
+    else if (key == "st")
+    {
+      if (value == 1)
+      {
+        afficherMessage("On  allume la sustentation");
+        valst = 1;
+        motor3.write(100);
+      }
+      else
+      {
+        afficherMessage("On  eteint la sustentation");
+        valst = value;
+        motor3.write(90);
+      }
     }
     else
     {
-      valst=0;
-      motor3.write(90);
-      Serial.println("On  eteint la sustentation");
+      afficherMessage("Error, tag not reconized! (" + key + ")");
     }
   }
-  else if(key=="get")
+  
+  void decrypt(String inp)
   {
-    if(value == 0)
+    char charBuf[inp.length() + 1];
+    inp.toCharArray(charBuf, inp.length());
+    char *p = charBuf;
+    char *str;
+    while ((str = strtok_r(p, "\n", &p)) != NULL)
     {
-      Serial.println(getSpd());
-    }
-    else if(value == 1)
-    {
-      Serial.println(getOri());
-    }
-    else if(value == 2)
-    {
-      Serial.println(getSus());
+      String temp = str;
+      if (temp.indexOf('=') < 0)
+      {
+         return; 
+      }
+      receid(temp.substring(0, temp.indexOf('=')), temp.substring(temp.indexOf('=') + 1).toInt());
     }
   }
-  else
-  { 
-    Serial.println("Error, tag not reconized!");
-  }
-}
-
-int getSpd()
-{
-  return valvi;
-}
-
-int getOri()
-{
-  return valor;
-}
-
-int getSus()
-{
-  return valst;
-}
-void decrypt(String inp)
-{
-    receid(imp.substring(imp.indexOf('#') + 1, imp.indexOf('=')), imp.substring(imp.indexOf('=') + 1).toInt()); 
-}
-
-void setup()
-{
-  motor3.attach(11); //Moteur 3 (Blanc) -> O0
-  motor1.attach(10); //Moteur 4 (Marron) -> O1
-  //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
-  //motor2.attach(6); //Moteur 2 (Orange) -> O3 
-  motor1.write(90);
-  motor3.write(90);
-  Serial.begin(9600);
-  Serial.println("Debut du programme");
-}
-
-void loop()
-{
-  String inString = "";
-  while (Serial.available() > 0) 
+  
+  void setup()
   {
-    int inChar = Serial.read();
-      inString += (char)inChar;
+    Bridge.begin();
+    Serial.begin(9600);
+    afficherMessage("Starting arduino!");
+    pinMode(13, OUTPUT);
+    digitalWrite(13, LOW);
+    digitalWrite(13, HIGH);
+    motor3.attach(11); //Moteur 3 (Blanc) -> O0
+    motor1.attach(10); //Moteur 4 (Marron) -> O1
+    //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
+    //motor2.attach(6); //Moteur 2 (Orange) -> O3
+    motor1.write(90);
+    motor3.write(90);
+    initAero();
   }
-  if(inString != "")
+  
+  void initAero()
   {
-    Serial.println(inString);
-    decrypt(inString);
+     afficherMessage("Copying default values to txt file...");
+     Process p;            
+     p.begin("cp");      
+     p.addParameter("-f"); 
+     p.addParameter("/mnt/sd/arduino/www/variables_start.txt"); 
+     p.addParameter("/mnt/sd/arduino/www/variables.txt"); 
+     p.run();
+     valvi = 0;
+     valor = 50;
+     valst = 0;
+     afficherMessage("Done!");
   }
-  delay(500);
-}
+  String getTextString()
+  {
+     Process p;            
+     p.begin("head");      
+     p.addParameter("/mnt/sd/arduino/www/variables.txt"); 
+     p.run();
+     String getted = "";
+     while(p.available() > 0) 
+     {
+       char c = p.read();
+       getted += c;
+     }
+     return getted;
+  }
+  
+  void loop()
+  {
+    delay(50);
+    decrypt(getTextString());
+  }
