@@ -41,7 +41,7 @@ void writeToMotors(String key, int value)
         motor1.write(RPMToServoSpeed(value));
         speed_value = value;
     }
-    else if(key == speed_key)
+    else if(key == orientation_key)
     {
         printMessage("Setting orientation to " + String(value));
         orientation_value = value;
