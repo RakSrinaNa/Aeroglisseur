@@ -1,92 +1,120 @@
-  #include <Servo.h>
-  #include <TinkerKit.h>
-  #include <Time.h>
-  #include <FileIO.h>
-  #include <Bridge.h>
-  
-  Servo motor1;
-  //Servo motor2;
-  Servo motor3;
-  //Servo motor4;
-  TKPotentiometer pot(I0);
-  int valvi;
-  int valor;
-  int valst;
-  
-  void afficherMessage(String message)
-  {
-     Serial.println(String(hour()) + ":" + String(minute()) + ":" + String(second()) + ":" + String(millis()) + " -> " + message); 
-  }
-  int getSpeedToServo(unsigned int spd)
-  {
-    if (spd == 0)
+#include <Servo.h>
+#include <TinkerKit.h>
+#include <Time.h>
+#include <FileIO.h>
+#include <Bridge.h>
+
+const String speed_key = "vi";
+const String orientation_key = "or";
+const String sustentation_key = "st";
+const String values_file = "variables.txt";
+
+Servo motor1;
+//Servo motor2;
+Servo motor3;
+//Servo motor4;
+TKPotentiometer potentiometer(I0);
+int speed_value;
+int orientation_value;
+int sustentation_value;
+
+void printMessage(String message)
+{
+    Serial.println(String(hour()) + ":" + String(minute()) + ":" + String(second()) + ":" + String(millis()) + " -> " + message);
+}
+
+int RPMToServoSpeed(unsigned int rpm)
+{
+    if(rpm == 0)
+        return 90;
+    return (119 + (int)(rpm / 151.22));
+}
+
+void writeToMotors(String key, int value)
+{
+    if(value < 0 || value > 10000 || (key == orientation_key && value == orientation_value) || (key == speed_key && value == speed_value) || (key == sustentation_key && value == sustentation_value))
+        return;
+    printMessage("Receiving key " + key + " with value " + value);
+    if(key == speed_key)
     {
-      return 90;
+        printMessage("Setting speed to " + String(value) + " which is " + String(RPMToServoSpeed(value)));
+        motor1.write(RPMToServoSpeed(value));
+        speed_value = value;
     }
-    return (119 + (int)(spd / 151.22));
-  }
-  
-  void receid(String key, int value)
-  {
-    if(value < 0 || value > 10000 || (key == "or" && value == valor) || (key == "vi" && value == valvi) || (key == "st" && value == valst))
+    else if(key == speed_key)
     {
-      return;
+        printMessage("Setting orientation to " + String(value));
+        orientation_value = value;
     }
-    afficherMessage("Recieving key " + key + " with value " + value);
-    if(key == "vi")
+    else if(key == sustentation_key)
     {
-      afficherMessage("On modifie la vitesse a " + String(value) + "soit" + String(getSpeedToServo(value)));
-      motor1.write(getSpeedToServo(value));
-      valvi = value;
-    }
-    else if (key == "or")
-    {
-      afficherMessage("On modifie l'orientation a " + String(value));
-      valor = value;
-    }
-    else if (key == "st")
-    {
-      if (value == 1)
-      {
-        afficherMessage("On  allume la sustentation");
-        valst = 1;
-        motor3.write(100);
-      }
-      else
-      {
-        afficherMessage("On  eteint la sustentation");
-        valst = value;
-        motor3.write(90);
-      }
+        if(value == 1)
+        {
+            printMessage("Switching sustentation ON");
+            motor3.write(100);
+            sustentation_value = 1;
+        }
+        else
+        {
+            printMessage("Switching sustentation OFF");
+            sustentation_value = value;
+            motor3.write(90);
+        }
     }
     else
+        printMessage("Error, key not recognized! (" + key + ")");
+}
+
+void decrypt(String input)
+{
+    char charBuffer[input.length() + 1];
+    input.toCharArray(charBuffer, input.length());
+    char *lines = charBuffer;
+    char *line;
+    while((line = strtok_r(lines, "\n", &lines)) != NULL)
     {
-      afficherMessage("Error, tag not reconized! (" + key + ")");
+        String temp = line;
+        if (temp.indexOf('=') < 0)
+            return;
+        writeToMotors(temp.substring(0, temp.indexOf('=')), temp.substring(temp.indexOf('=') + 1).toInt());
     }
-  }
-  
-  void decrypt(String inp)
-  {
-    char charBuf[inp.length() + 1];
-    inp.toCharArray(charBuf, inp.length());
-    char *p = charBuf;
-    char *str;
-    while ((str = strtok_r(p, "\n", &p)) != NULL)
+}
+
+void initAero()
+{
+    printMessage("Copying default values to txt file...");
+    Process process;
+    process.begin("cp");
+    process.addParameter("-f");
+    process.addParameter("/mnt/sd/arduino/www/variables_start.txt");
+    process.addParameter("/mnt/sd/arduino/www/" + values_file);
+    process.run();
+    speed_value = 0;
+    orientation_value = 50;
+    sustentation_value = 0;
+    printMessage("Done!");
+}
+
+String readValuesFile()
+{
+    Process process;
+    process.begin("head");
+    process.addParameter("/mnt/sd/arduino/www/" + values_file);
+    process.run();
+    String response = "";
+    while(process.available() > 0)
     {
-      String temp = str;
-      if (temp.indexOf('=') < 0)
-      {
-         return; 
-      }
-      receid(temp.substring(0, temp.indexOf('=')), temp.substring(temp.indexOf('=') + 1).toInt());
+        char c = process.read();
+        response += c;
     }
-  }
-  
-  void setup()
-  {
+     return response;
+}
+
+void setup()
+{
     Bridge.begin();
     Serial.begin(9600);
-    afficherMessage("Starting arduino!");
+    printMessage("Starting arduino!");
     pinMode(13, OUTPUT);
     digitalWrite(13, LOW);
     digitalWrite(13, HIGH);
@@ -97,39 +125,10 @@
     motor1.write(90);
     motor3.write(90);
     initAero();
-  }
-  
-  void initAero()
-  {
-     afficherMessage("Copying default values to txt file...");
-     Process p;            
-     p.begin("cp");      
-     p.addParameter("-f"); 
-     p.addParameter("/mnt/sd/arduino/www/variables_start.txt"); 
-     p.addParameter("/mnt/sd/arduino/www/variables.txt"); 
-     p.run();
-     valvi = 0;
-     valor = 50;
-     valst = 0;
-     afficherMessage("Done!");
-  }
-  String getTextString()
-  {
-     Process p;            
-     p.begin("head");      
-     p.addParameter("/mnt/sd/arduino/www/variables.txt"); 
-     p.run();
-     String getted = "";
-     while(p.available() > 0) 
-     {
-       char c = p.read();
-       getted += c;
-     }
-     return getted;
-  }
-  
-  void loop()
-  {
+}
+
+void loop()
+{
+    decrypt(readValuesFile());
     delay(50);
-    decrypt(getTextString());
-  }
+}
