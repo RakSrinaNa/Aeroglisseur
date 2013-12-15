@@ -5,7 +5,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -15,6 +18,7 @@ public class Sender extends Thread
 	private static String IP_URL;
 	private static Map<String, Integer> requestsSended;
 	private static final String[] keys = {"or", "st", "vi"};
+	private static List<Long> times;
 
 	private static boolean init() throws Exception
 	{
@@ -32,6 +36,7 @@ public class Sender extends Thread
 
 	synchronized private String sendGet(String params) throws Exception
 	{
+		Date start = new Date();
 		URL url = new URL(IP_URL + "?" + params);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("GET");
@@ -45,15 +50,21 @@ public class Sender extends Thread
 		while((inputLine = in.readLine()) != null)
 			response.append(inputLine);
 		in.close();
+		times.add((new Date().getTime() - start.getTime()));
+		long average = 0;
+		for(long l : times)
+			average += l;
+		System.out.println("Done in " + times.get(times.size() - 1) + " ms\tAverage: " + (average/times.size()));
 		return response.toString();
 	}
 
 	public Sender(String IP1, String IP2) throws Exception
 	{
-		this.IP_PING = IP1;
-		this.IP_URL = IP2;
+		Sender.IP_PING = IP1;
+		Sender.IP_URL = IP2;
 		Main.logger.log(Level.INFO, "Creating sender...");
 		setName("Sender");
+		times = new ArrayList<Long>();
 		requestsSended = new HashMap<String, Integer>();
 		requestsSended.put("or", 50);
 		requestsSended.put("vi", 0);

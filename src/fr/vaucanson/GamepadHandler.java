@@ -13,6 +13,7 @@ public class GamepadHandler extends Thread
 	private static Map<Integer, Boolean> buttonsPressed;
 	private static Map<Integer, Float> axisStatus, povStatus;
 	private static final int conf = 1;
+	private static final boolean ubuntu = true;
 	
 	public GamepadHandler() {}
 	
@@ -81,11 +82,11 @@ public class GamepadHandler extends Thread
 				{
 					if(i == 1 && conf == 1)
 						Interface.setValue("or", controller.getAxisValue(i));
-					else if(i == 2 && conf == 1)
+					else if(((i == 2 && !ubuntu) || i == 5 && ubuntu) && conf == 1)
 						Interface.setValue("vi", controller.getAxisValue(i));
 					System.out.println("Axis " + i + " changed to " + controller.getAxisValue(i));
 				}
-			if(controller.getAxisValue(2) != 0 && conf == 0)
+			if(((controller.getAxisValue(2) != 0 && !ubuntu) || (controller.getAxisValue(5) != 0 && ubuntu)) && conf == 0)
 				Interface.changeValue("vi", (int)(-250 * controller.getAxisValue(2)));
 			if(controller.getAxisValue(1) != 0 && conf == 0)
 				Interface.changeValue("or", (int)(5 * controller.getAxisValue(1)));
@@ -131,7 +132,7 @@ public class GamepadHandler extends Thread
 		for(int i = 0; i < Controllers.getControllerCount(); i++)
 		{
 			controller = Controllers.getController(i);
-			if(controller.getName().contains("Gamepad F310"))
+			if(controller.getName().contains("Gamepad F310") || controller.getName().contains("Generic X-Box pad"))
 				break;
 		}
 		if(controller.equals(null))
