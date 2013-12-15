@@ -221,6 +221,26 @@ public class Interface extends JFrame implements KeyListener
 		Interface.requests = requests;
 	}
 
+	public static void setValue(String key, float value)
+	{
+		if(key.equals("or"))
+		{
+			int nValue = (int) ((sliderOrientation.getMaximum() / 2) + (value * (sliderOrientation.getMaximum() / 2)));
+			System.out.println(nValue);
+			sliderOrientation.setValue(nValue);
+			addToSend("or", sliderOrientation.getValue());
+			labelOrientation.setText(String.valueOf(sliderOrientation.getValue()));
+		}
+		else if(key.equals("vi"))
+		{
+			int nValue = (int)(-1 * value * sliderSpeed.getMaximum());
+			System.out.println(nValue);
+			sliderSpeed.setValue(nValue);
+			labelSpeed.setText(String.valueOf(sliderSpeed.getValue()));
+			addToSend("vi", sliderSpeed.getValue());
+		}
+	}
+	
 	public static void changeValue(String key, int value)
 	{
 		if(key.equals("or"))

@@ -12,6 +12,7 @@ public class GamepadHandler extends Thread
 	private static Controller controller;
 	private static Map<Integer, Boolean> buttonsPressed;
 	private static Map<Integer, Float> axisStatus, povStatus;
+	private static final int conf = 1;
 	
 	public GamepadHandler() {}
 	
@@ -44,6 +45,7 @@ public class GamepadHandler extends Thread
 	 * 0 -> Milieu
 	 * -1 -> Gauche
 	 */
+	@SuppressWarnings("all")
 	@Override
 	public void run()
 	{
@@ -76,10 +78,16 @@ public class GamepadHandler extends Thread
 				}
 			for(int i = 0; i < axisStatus.size(); i++)
 				if(axisStatus.get(i) != controller.getAxisValue(i))
+				{
+					if(i == 1 && conf == 1)
+						Interface.setValue("or", controller.getAxisValue(i));
+					else if(i == 2 && conf == 1)
+						Interface.setValue("vi", controller.getAxisValue(i));
 					System.out.println("Axis " + i + " changed to " + controller.getAxisValue(i));
-			if(controller.getAxisValue(2) != 0)
+				}
+			if(controller.getAxisValue(2) != 0 && conf == 0)
 				Interface.changeValue("vi", (int)(-250 * controller.getAxisValue(2)));
-			if(controller.getAxisValue(1) != 0)
+			if(controller.getAxisValue(1) != 0 && conf == 0)
 				Interface.changeValue("or", (int)(5 * controller.getAxisValue(1)));
 			if(povStatus.containsKey(0))
 				if(povStatus.get(0) != controller.getPovX())
