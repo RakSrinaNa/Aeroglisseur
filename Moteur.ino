@@ -25,9 +25,9 @@ void printMessage(String message)
 
 int RPMToServoSpeed(unsigned int rpm)
 {
-    if(rpm == 0)
+    if(rpm <= 0)
         return 90;
-    return (119 + (int)(rpm / 151.22));
+    return (90 + (int)(rpm / 151.22));
 }
 
 void writeToMotors(String key, int value)
