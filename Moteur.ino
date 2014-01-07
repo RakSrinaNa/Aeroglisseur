@@ -1,6 +1,6 @@
 #include <Servo.h>
 #include <TinkerKit.h>
-#include <Time.h>
+//#include <Time.h>
 #include <FileIO.h>
 #include <Bridge.h>
 
@@ -20,14 +20,14 @@ int sustentation_value;
 
 void printMessage(String message)
 {
-    Serial.println(String(hour()) + ":" + String(minute()) + ":" + String(second()) + ":" + String(millis()) + " -> " + message);
+    Serial.println(/*String(hour()) + ":" + String(minute()) + ":" + String(second()) + ":" + String(millis()) + " -> " + */message);
 }
 
 int RPMToServoSpeed(unsigned int rpm)
 {
-    if(rpm <= 0)
+    if(rpm == 0)
         return 90;
-    return (90 + (int)(rpm / 151.22));
+    return (119 + (int)(rpm / 151.22));
 }
 
 void writeToMotors(String key, int value)
@@ -92,7 +92,6 @@ void initAero()
     speed_value = 0;
     orientation_value = 50;
     sustentation_value = 0;
-    printMessage("Done!");
 }
 
 String readValuesFile()
@@ -125,10 +124,16 @@ void setup()
     motor1.write(90);
     motor3.write(90);
     initAero();
+    printMessage("Done!");
 }
 
 void loop()
 {
-    decrypt(readValuesFile());
-    delay(50);
+    float pt = potentiometer.get();
+    if(pt > 10)
+    {
+	writeToMotors("vi", (int)((pt*9500)/(1023.0)));
+    }	
+    //decrypt(readValuesFile());
+    //delay(50);
 }
