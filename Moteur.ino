@@ -1,6 +1,5 @@
 #include <Servo.h>
 #include <TinkerKit.h>
-//#include <Time.h>
 #include <FileIO.h>
 #include <Bridge.h>
 
@@ -13,6 +12,7 @@ Servo motor1;
 //Servo motor2;
 Servo motor3;
 //Servo motor4;
+Servo servoMotor;
 TKPotentiometer potentiometer(I0);
 int speed_value;
 int orientation_value;
@@ -20,7 +20,12 @@ int sustentation_value;
 
 void printMessage(String message)
 {
-    Serial.println(/*String(hour()) + ":" + String(minute()) + ":" + String(second()) + ":" + String(millis()) + " -> " + */message);
+    Serial.println(String(millis()/1000) + " -> " + message);
+}
+
+int oriToDegrees(unsigned int ori)
+{
+  return (int)ori*1.8 >= 180 ? 178 : (int)ori*1.8 <= 0 ? 0 : (int)ori*1.8;
 }
 
 int RPMToServoSpeed(unsigned int rpm)
@@ -45,6 +50,7 @@ void writeToMotors(String key, int value)
     {
         printMessage("Setting orientation to " + String(value));
         orientation_value = value;
+        servoMotor.write(oriToDegrees(value));
     }
     else if(key == sustentation_key)
     {
@@ -121,19 +127,16 @@ void setup()
     motor1.attach(10); //Moteur 4 (Marron) -> O1
     //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
     //motor2.attach(6); //Moteur 2 (Orange) -> O3
+    servoMotor.attach(9);
     motor1.write(90);
     motor3.write(90);
+    servoMotor.write(90);
     initAero();
     printMessage("Done!");
 }
 
 void loop()
 {
-    float pt = potentiometer.get();
-    if(pt > 10)
-    {
-	writeToMotors("vi", (int)((pt*9500)/(1023.0)));
-    }	
-    //decrypt(readValuesFile());
-    //delay(50);
+    decrypt(readValuesFile());
+    delay(50);
 }
