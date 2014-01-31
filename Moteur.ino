@@ -6,6 +6,8 @@
 const String speed_key = "vi";
 const String orientation_key = "or";
 const String sustentation_key = "st";
+const String horizontal_cam_key = "ch";
+const String vertical_cam_key = "cv";
 const String values_file = "variables.txt";
 
 Servo motor1;
