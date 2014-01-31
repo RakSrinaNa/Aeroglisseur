@@ -17,7 +17,7 @@ public class Sender extends Thread
 	public static String IP_PING;
 	private static String IP_URL;
 	private static Map<String, Integer> requestsSended;
-	private static final String[] keys = {"or", "st", "vi"};
+	private static final String[] keys = {"or", "st", "vi", "cv", "ch"};
 	private static List<Long> times;
 
 	private static boolean init() throws Exception
@@ -54,7 +54,7 @@ public class Sender extends Thread
 		long average = 0;
 		for(long l : times)
 			average += l;
-		System.out.println("Done in " + times.get(times.size() - 1) + " ms\tAverage: " + (average/times.size()));
+		System.out.println("Done in " + times.get(times.size() - 1) + " ms\tAverage: " + (average / times.size()));
 		return response.toString();
 	}
 
@@ -69,12 +69,13 @@ public class Sender extends Thread
 		requestsSended.put("or", 50);
 		requestsSended.put("vi", 0);
 		requestsSended.put("st", 0);
+		requestsSended.put("ch", 0);
+		requestsSended.put("cv", 0);
 		init();
 		Main.logger.log(Level.INFO, "Sender initialized on " + IP_PING + " sending requests to " + IP_URL + "!");
 	}
 
-	@SuppressWarnings("cast")
-    @Override
+	@Override
 	public void run()
 	{
 		while(!Thread.interrupted())
@@ -83,9 +84,10 @@ public class Sender extends Thread
 			{
 				Thread.sleep(50);
 			}
-			catch(final Exception e){}
+			catch(final Exception e)
+			{}
 			for(final String key : keys)
-				if((int)Interface.getRequests().get(key) != (int)requestsSended.get(key))
+				if(Interface.getRequests().get(key) != requestsSended.get(key))
 				{
 					try
 					{
@@ -94,9 +96,9 @@ public class Sender extends Thread
 						requestsSended.put(key, value);
 					}
 					catch(Exception e)
-		            {
-			            Main.logger.log(Level.WARNING, "Error when contacting Arduino!", e);
-		            }
+					{
+						Main.logger.log(Level.WARNING, "Error when contacting Arduino!", e);
+					}
 				}
 		}
 	}
