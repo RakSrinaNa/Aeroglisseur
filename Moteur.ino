@@ -19,6 +19,10 @@ TKPotentiometer potentiometer(I0);
 int speed_value;
 int orientation_value;
 int sustentation_value;
+int vetical_cam;
+int horizontale_cam;
+Servo servoVertCam;
+Servo servoHorCam;
 
 void printMessage(String message)
 {
@@ -68,7 +72,19 @@ void writeToMotors(String key, int value)
             sustentation_value = value;
             motor3.write(90);
         }
+     else if(key == ch)
+    {
+        printMessage("Setting orientation CamHor to " + String(value));
+        horizontale_cam = value;
+        servoHorCam.write(oriToDegrees(value));
+   
     }
+     else if(key == cv)
+    {
+        printMessage("Setting orientation CamVertival to " + String(value));
+        vetical_cam = value;
+        servoVertCam.write(oriToDegrees(value));
+
     else
         printMessage("Error, key not recognized! (" + key + ")");
 }
@@ -130,9 +146,13 @@ void setup()
     //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
     //motor2.attach(6); //Moteur 2 (Orange) -> O3
     servoMotor.attach(9);
+    servoVertCam.attach();
+    servoHorCam.attach();
     motor1.write(90);
     motor3.write(90);
     servoMotor.write(90);
+    servoVertCam.write(90);
+    servoHorCam.write(90);
     initAero();
     printMessage("Done!");
 }
