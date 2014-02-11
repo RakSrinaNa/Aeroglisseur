@@ -15,14 +15,14 @@ Servo motor1;
 Servo motor3;
 //Servo motor4;
 Servo servoMotor;
+Servo servoVertCam;
+Servo servoHorCam;
 TKPotentiometer potentiometer(I0);
 int speed_value;
 int orientation_value;
 int sustentation_value;
-int vetical_cam;
-int horizontale_cam;
-Servo servoVertCam;
-Servo servoHorCam;
+int vetical_cam_value;
+int horizontale_cam_value;
 
 void printMessage(String message)
 {
@@ -31,6 +31,7 @@ void printMessage(String message)
 
 int oriToDegrees(unsigned int ori)
 {
+  //ORI -> Min: 0 / Max: 100
   return (int)ori*1.8 >= 180 ? 178 : (int)ori*1.8 <= 0 ? 0 : (int)ori*1.8;
 }
 
@@ -72,19 +73,19 @@ void writeToMotors(String key, int value)
             sustentation_value = value;
             motor3.write(90);
         }
-     else if(key == ch)
+     else if(key == horizontal_cam_key)
     {
-        printMessage("Setting orientation CamHor to " + String(value));
-        horizontale_cam = value;
+        printMessage("Setting orientation CamHorizontal to " + String(value));
+        horizontale_cam_value = value;
         servoHorCam.write(oriToDegrees(value));
    
     }
-     else if(key == cv)
+     else if(key == vertical_cam_key)
     {
         printMessage("Setting orientation CamVertival to " + String(value));
-        vetical_cam = value;
+        vetical_cam_value = value;
         servoVertCam.write(oriToDegrees(value));
-
+    }
     else
         printMessage("Error, key not recognized! (" + key + ")");
 }
@@ -146,8 +147,8 @@ void setup()
     //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
     //motor2.attach(6); //Moteur 2 (Orange) -> O3
     servoMotor.attach(9);
-    servoVertCam.attach();
-    servoHorCam.attach();
+    servoVertCam.attach(/*TODO PIN*/);
+    servoHorCam.attach(/*TODO PIN*/);
     motor1.write(90);
     motor3.write(90);
     servoMotor.write(90);
