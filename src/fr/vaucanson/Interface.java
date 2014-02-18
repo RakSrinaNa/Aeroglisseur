@@ -151,7 +151,7 @@ public class Interface extends JFrame
 		frameObjects.put("S" + key, tempSlider);
 	}
 	
-	public void setValue(String key, float value)
+	public static void setValue(String key, float value)
 	{
 		JSlider slider = ((JSlider)frameObjects.get("S" + key));
 		JLabel lab = ((JLabel)frameObjects.get("T" + key));
@@ -163,7 +163,7 @@ public class Interface extends JFrame
 		frameObjects.put("T" + key, lab);
 	}
 	
-	public void changeValue(String key, int value)
+	public static void changeValue(String key, int value)
 	{
 		JSlider slider = ((JSlider)frameObjects.get("S" + key));
 		JLabel lab = ((JLabel)frameObjects.get("T" + key));
@@ -174,9 +174,16 @@ public class Interface extends JFrame
 		frameObjects.put("T" + key, lab);
 	}
 	
-	synchronized public void addToSend(final String key, final int value)
+	synchronized public static void addToSend(final String key, final int value)
 	{
 		Main.logger.log(Level.FINEST, "Changing " + key + " to " + value);
 		requests.put(key, value);
+	}
+
+	/**
+	 * @return the requests
+	 */
+	public static HashMap<String, Integer> getRequests() {
+		return requests;
 	}
 }
