@@ -8,17 +8,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class Sender extends Thread
 {
 	public static String IP_PING;
 	private static String IP_URL;
-	private static Map<String, Integer> requestsSended;
+	private static HashMap<String, Integer> requestsSended;
 	private static final String[] keys = {"or", "st", "vi", "cv", "ch"};
-	private static List<Long> times;
+	private static ArrayList<Long> times;
 
 	private static boolean init() throws Exception
 	{
@@ -36,21 +34,21 @@ public class Sender extends Thread
 
 	synchronized private String sendGet(String params) throws Exception
 	{
-		Date start = new Date();
+		Date startDate = new Date();
 		URL url = new URL(IP_URL + "?" + params);
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		con.setRequestMethod("GET");
-		con.setRequestProperty("User-Agent", "Mozilla/5.0");
-		int responseCode = con.getResponseCode();
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+		int responseCode = connection.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		BufferedReader inputSream = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
-		while((inputLine = in.readLine()) != null)
+		while((inputLine = inputSream.readLine()) != null)
 			response.append(inputLine);
-		in.close();
-		times.add((new Date().getTime() - start.getTime()));
+		inputSream.close();
+		times.add((new Date().getTime() - startDate.getTime()));
 		long average = 0;
 		for(long l : times)
 			average += l;
@@ -69,8 +67,8 @@ public class Sender extends Thread
 		requestsSended.put("or", 50);
 		requestsSended.put("vi", 0);
 		requestsSended.put("st", 0);
-		requestsSended.put("ch", 0);
-		requestsSended.put("cv", 0);
+		requestsSended.put("ch", 50);
+		requestsSended.put("cv", 50);
 		init();
 		Main.logger.log(Level.INFO, "Sender initialized on " + IP_PING + " sending requests to " + IP_URL + "!");
 	}
@@ -84,14 +82,14 @@ public class Sender extends Thread
 			{
 				Thread.sleep(50);
 			}
-			catch(final Exception e)
+			catch(final Exception exception)
 			{}
 			for(final String key : keys)
-				if(Interface.getRequests().get(key) != requestsSended.get(key))
+				if(InterfaceO.getRequests().get(key) != requestsSended.get(key))
 				{
 					try
 					{
-						int value = Interface.getRequests().get(key);
+						int value = InterfaceO.getRequests().get(key);
 						sendGet(key + "=" + value);
 						requestsSended.put(key, value);
 					}
