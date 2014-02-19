@@ -2,10 +2,12 @@ package fr.vaucanson;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
@@ -24,7 +26,7 @@ public class Interface extends JFrame
 {
 	private static final long serialVersionUID = 7231194594050358481L;
 	public JFrame mainFrame;
-	private static JPanel contentPanel;
+	private static JPanel contentPanel, camPanel, controlPanel;
 	private static Hashtable<String, Object> frameObjects;
 	private static HashMap<String, Integer> requests;
 	
@@ -51,7 +53,7 @@ public class Interface extends JFrame
 		/***************************************************************************************************/
 		mainFrame = new JFrame("Controles de l'aeroglisseur");
 		mainFrame.setLayout(new GridLayout(0, 5));
-		mainFrame.setPreferredSize(new Dimension(570, 300));
+		mainFrame.setPreferredSize(new Dimension(800, 450));
 		mainFrame.setResizable(true);
 		mainFrame.setAlwaysOnTop(true);
 		mainFrame.setLayout(new BorderLayout());
@@ -95,19 +97,33 @@ public class Interface extends JFrame
 			}
 		});
 		contentPanel = new JPanel();
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-		addSlider(0, 100, 50, "or", labelTableOrientation);
-		addSlider(0, 9225, 0, "vi", labelTableSpeed);
-		addSlider(0, 1, 50, "st", labelTableSustentation);
-		addSlider(0, 100, 50, "cv", labelTableCamVert);
-		addSlider(0, 100, 50, "ch", labelTableOrientation);
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
+		camPanel = new JPanel();
+		camPanel.setLayout(new BoxLayout(camPanel, BoxLayout.Y_AXIS));
+		controlPanel = new JPanel();
+		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+		addSlider(0, 1, 1, 0, "st", labelTableSustentation, controlPanel);
+		addSlider(0, 9225, 250, 0, "vi", labelTableSpeed, controlPanel);
+		addSlider(0, 100, 10, 50, "or", labelTableOrientation, controlPanel);
+		addSlider(0, 100, 10, 50, "cv", labelTableCamVert, camPanel);
+		addSlider(0, 100, 10, 50, "ch", labelTableOrientation, camPanel);
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.PAGE_START;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.gridy = 0;
+		constraints.gridx = 0;
+		constraints.weightx = 0.5;
+		contentPanel.add(controlPanel, constraints);
+		constraints.insets = new Insets(0,0,10,0);
+		constraints.gridx = 1;
+		contentPanel.add(camPanel, constraints);
 		mainFrame.add(contentPanel);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.pack();
 	}
 	
-	private void addSlider(int min, int max, int base, final String key, Hashtable<Integer, JLabel> labels)
+	private void addSlider(int min, int max, int majT, int base, final String key, Hashtable<Integer, JLabel> labels, Container cont)
 	{
 		JPanel tempPanel = new JPanel(new GridBagLayout());
 		JLabel tempLabel = new JLabel();
@@ -117,6 +133,10 @@ public class Interface extends JFrame
 		tempSlider.setValue(min);
 		tempSlider.setMaximum(max);
 		tempSlider.setToolTipText("S" + key);
+		tempSlider.setBounds(0, 0, 484, 66);
+		tempSlider.setMajorTickSpacing(majT);
+		tempSlider.setValue(base);
+		tempSlider.setPaintTicks(true);
 		if(labels != null)
 		{
 			tempSlider.setLabelTable(labels);
@@ -146,7 +166,7 @@ public class Interface extends JFrame
 		constraints.gridx = 1;
 		constraints.weightx = 0.15;
 		tempPanel.add(tempLabel, constraints);
-		contentPanel.add(tempPanel);
+		cont.add(tempPanel);
 		frameObjects.put("T" + key, tempLabel);
 		frameObjects.put("S" + key, tempSlider);
 	}
