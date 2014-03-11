@@ -157,10 +157,11 @@ public class Interface extends JFrame
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridy = 0;
 		constraints.gridx = 0;
-		constraints.weighty = 0.15;
+		constraints.ipadx = 700;
+		constraints.weighty = 0.01;
 		mainFrame.add(topPanel, constraints);
 		constraints.insets = new Insets(0,0,0,10);
-		constraints.weighty = 0.85;
+		constraints.weighty = 0.99;
 		constraints.gridy = 1;
 		mainFrame.add(contentPanel, constraints);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
