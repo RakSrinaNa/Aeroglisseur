@@ -3,124 +3,26 @@ package fr.vaucanson;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
 public class GamepadHandler extends Thread
 {
-	private static Controller controller;
-	private static Map<Integer, Boolean> buttonsPressed;
-	private static Map<Integer, Float> axisStatus, povStatus;
-	private static final int conf = 1;
-	private static final boolean ubuntu = false;
+	private final String ACT_SUSTENT = "A", VALUE_ORIENTATION = "", VALUE_ORIENTATION_POV = "POVX", VALUE_SUSTENTATION = "", VALUE_SPEED = "", VALUE_SPEED_POV = "POVY";
+	private final int CONF_ABSOLUTE = 0, CONF_RELATIVE = 1;
+	private final int conf = CONF_ABSOLUTE;
+	private Controller controller;
+	private Map<String, Boolean> buttonsPressed;
+	private Map<String, Float> axisStatus, povStatus;
 	
-	public GamepadHandler() {}
-	
-	/**
-	 * BUTTONS:
-	 * 0 -> A
-	 * 1 -> B
-	 * 2 -> X
-	 * 3 -> Y
-	 * 4 -> L1
-	 * 5 -> R1
-	 * 6 -> SELECT
-	 * 7 -> START
-	 * 8 -> L3
-	 * 9 -> R3
-	 * 
-	 * AXIS:
-	 * 0 -> Y Gauche
-	 * 1 -> X Gauche
-	 * 2 -> Y Droit
-	 * 3 -> X Droit
-	 * 
-	 * POVX:
-	 * 1 -> Bas
-	 * 0 -> Milieu
-	 * -1 -> Haut
-	 * 
-	 * POVY:
-	 * 1 -> Droite
-	 * 0 -> Milieu
-	 * -1 -> Gauche
-	 */
-	@SuppressWarnings("all")
-	@Override
-	public void run()
+	public GamepadHandler()
 	{
-		try
-        {
-	        init();
-	        Thread.sleep(450);
-        }
-        catch(Exception e1)
-        {
-        	return;
-        }
-		while(!Thread.interrupted())
-		{
-			try
-            {
-	            Thread.sleep(50);
-            }
-            catch(InterruptedException e)
-            {
-	            e.printStackTrace();
-            }
-			controller.poll();
-			for(int i = 0; i < buttonsPressed.size(); i++)
-				if(buttonsPressed.get(i) != controller.isButtonPressed(i))
-				{
-					if(i == 0 && controller.isButtonPressed(i))
-						Interface.changeValue("st", -1);
-					System.out.println("Button " + i + " changed to " + controller.isButtonPressed(i));
-				}
-			for(int i = 0; i < axisStatus.size(); i++)
-				if(axisStatus.get(i) != controller.getAxisValue(i))
-				{
-					if(i == 1 && conf == 1)
-						Interface.setValue("or", controller.getAxisValue(i));
-					else if(((i == 2 && !ubuntu) || i == 5 && ubuntu) && conf == 1)
-						Interface.setValue("vi", controller.getAxisValue(i));
-					System.out.println("Axis " + i + " changed to " + controller.getAxisValue(i));
-				}
-			if((controller.getAxisValue(2) != 0 && !ubuntu) && conf == 0)
-				Interface.changeValue("vi", (int)(-250 * controller.getAxisValue(2)));
-			else if(ubuntu)
-				if(controller.getAxisValue(5) != 0)
-					Interface.changeValue("vi", (int)(-250 * controller.getAxisValue(5)));
-			if(controller.getAxisValue(1) != 0 && conf == 0)
-				Interface.changeValue("or", (int)(5 * controller.getAxisValue(1)));
-			if(povStatus.containsKey(0))
-				if(povStatus.get(0) != controller.getPovX())
-				{
-					if(controller.getPovX() == -1.0)
-						Interface.changeValue("or", -1);
-					else if(controller.getPovX() == 1.0)
-						Interface.changeValue("or", 1);
-					System.out.println("POVX changed to " + controller.getPovX());
-				}
-			if(povStatus.containsKey(1))
-				if(povStatus.get(1) != controller.getPovY())
-				{
-					if(controller.getPovY() == -1.0)
-						Interface.changeValue("vi", 100);
-					else if(controller.getPovY() == 1.0)
-						Interface.changeValue("vi", -100);
-					System.out.println("POVX changed to " + controller.getPovY());
-				}
-			for(int i = 0; i < controller.getButtonCount(); i++)
-				buttonsPressed.put(i, controller.isButtonPressed(i));
-			for(int i = 0; i < controller.getAxisCount(); i++)
-				axisStatus.put(i, controller.getAxisValue(i));
-			povStatus.put(0, controller.getPovX());
-			povStatus.put(1, controller.getPovY());
-		}
+		
 	}
 	
-	private static void init() throws Exception
+	private void init() throws Exception
 	{
 		Main.logger.log(Level.INFO, "Setting Gamepad Controller...");
 		try
@@ -145,19 +47,105 @@ public class GamepadHandler extends Thread
 		while(controller.getAxisValue(0) != 0 || controller.getAxisValue(1) != 0 || controller.getAxisValue(2) != 0 || controller.getAxisValue(3) != 0)
 			controller.poll();
 		Main.logger.log(Level.FINE, "Joysticks OK");
-		buttonsPressed = new HashMap<Integer, Boolean>();
-		axisStatus = new HashMap<Integer, Float>();
-		povStatus = new HashMap<Integer, Float>();
+		buttonsPressed = new HashMap<String, Boolean>();
+		axisStatus = new HashMap<String, Float>();
+		povStatus = new HashMap<String, Float>();
 		Main.logger.log(Level.INFO, "Gamepad Controller OK!");
 	}
-
-	public static Controller getController()
-    {
-	    return controller;
-    }
-
-	public static void setController(Controller controller)
-    {
-	    GamepadHandler.controller = controller;
-    }
+	
+	@Override
+	public void run()
+	{
+		try
+        {
+	        init();
+	        Thread.sleep(450);
+        }
+        catch(Exception e)
+        {
+        	return;
+        }
+		while(!Thread.interrupted())
+		{
+			try
+            {
+	            Thread.sleep(50);
+            }
+            catch(InterruptedException e)
+            {
+	            Main.logger.log(Level.WARNING, "Error when sleeping for the controller", e);
+            }
+			controller.poll();
+			for(int i = 0; i < buttonsPressed.size(); i++)
+				if(buttonsPressed.get(controller.getButtonName(i)) != controller.isButtonPressed(i))
+				{
+					if(controller.isButtonPressed(i))
+						onButtonPressed(controller.getButtonName(i));
+					else
+						onButtonReleased(controller.getButtonName(i));
+					buttonsPressed.put(controller.getButtonName(i), controller.isButtonPressed(i));
+				}
+			for(int i = 0; i < axisStatus.size(); i++)
+				if(axisStatus.get(controller.getAxisName(i)) != controller.getAxisValue(i))
+				{
+					onAxisValueChange(controller.getAxisName(i), controller.getAxisValue(i));
+					axisStatus.put(controller.getAxisName(i), controller.getAxisValue(i));
+				}
+			if(controller.getPovX() != povStatus.get("POVX"))
+			{
+				onPovValueChange("POVX", controller.getPovX());
+				povStatus.put("POVX", controller.getPovX());
+			}
+			if(controller.getPovX() != povStatus.get("POVX"))
+			{
+				onPovValueChange("POVY", controller.getPovY());
+				povStatus.put("POVY", controller.getPovX());
+			}
+		}
+	}
+	
+	private void onButtonPressed(final String name)
+	{
+		Main.logger.log(Level.INFO, "Button " + name + " pressed");
+		if(name.equals(ACT_SUSTENT))
+			Interface.changeValue("st", -1);
+	}
+	
+	private void onButtonReleased(final String name)
+	{
+		Main.logger.log(Level.INFO, "Button " + name + " pressed");
+	}
+	
+	@SuppressWarnings("all")
+	private void onAxisValueChange(final String name, final float value)
+	{
+		Main.logger.log(Level.INFO, "Axis " + name + " modified to " + value);
+		if(conf == CONF_ABSOLUTE)
+		{
+			if(name.equals(VALUE_ORIENTATION))
+				Interface.setValue("or", value);
+			else if(name.equals(VALUE_SUSTENTATION))
+				Interface.setValue("vi", value);
+		}
+		else if(conf == CONF_RELATIVE)
+		{
+			if(name.equals(VALUE_SPEED))
+				Interface.changeValue("vi", (int)(-250 * value));
+			else if(name.equals(VALUE_ORIENTATION))
+				Interface.changeValue("or", (int)(5 * value));
+		}
+	}
+	
+	private void onPovValueChange(final String name, final float value)
+	{
+		Main.logger.log(Level.INFO, "POV " + name + " modified to " + value);
+		if(name.equals(VALUE_ORIENTATION_POV))
+		{
+			Interface.changeValue("or", (int)value);
+		}
+		else if(name.equals(VALUE_SPEED_POV))
+		{
+			Interface.changeValue("vi", -100 * (int)value);
+		}
+	}
 }
