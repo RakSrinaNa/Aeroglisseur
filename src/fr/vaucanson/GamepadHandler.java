@@ -17,11 +17,20 @@ public class GamepadHandler extends Thread
 	private Map<String, Boolean> buttonsPressed;
 	private Map<String, Float> axisStatus, povStatus;
 	
+	/**
+	 * Constructor
+	 */
 	public GamepadHandler()
 	{
 		
 	}
 	
+	/**
+	 * Used to initialize the controller
+	 * 
+	 * @return Nothing
+	 * @throws Exception
+	 */
 	private void init() throws Exception
 	{
 		Main.logger.log(Level.INFO, "Setting Gamepad Controller...");
@@ -56,6 +65,9 @@ public class GamepadHandler extends Thread
 		Main.logger.log(Level.INFO, "Gamepad Controller OK!");
 	}
 	
+	/**
+	 * Checking the inputs of the controller
+	 */
 	@Override
 	public void run()
 	{
@@ -107,6 +119,12 @@ public class GamepadHandler extends Thread
 		}
 	}
 	
+	/**
+	 * Called when a button is pressed
+	 * 
+	 * @param name The button's name
+	 * @return Nothing
+	 */
 	private void onButtonPressed(final String name)
 	{
 		Main.logger.log(Level.INFO, "Button " + name + " pressed");
@@ -114,11 +132,24 @@ public class GamepadHandler extends Thread
 			Interface.changeValue("st", -1);
 	}
 	
+	/**
+	 * Called when a button is released
+	 * 
+	 * @param name The button's name
+	 * @return Nothing
+	 */
 	private void onButtonReleased(final String name)
 	{
 		Main.logger.log(Level.INFO, "Button " + name + " pressed");
 	}
 	
+	/**
+	 * Called when an axis value changed
+	 * 
+	 * @param name The axis' name
+	 * @param value The new value
+	 * @return Nothing
+	 */
 	@SuppressWarnings("all")
 	private void onAxisValueChange(final String name, final float value)
 	{
@@ -139,6 +170,13 @@ public class GamepadHandler extends Thread
 		}
 	}
 	
+	/**
+	 * Called when a POV axis value changed
+	 * 
+	 * @param name The POV axis name
+	 * @param value The new value
+	 * @return Nothing
+	 */
 	private void onPovValueChange(final String name, final float value)
 	{
 		Main.logger.log(Level.INFO, "POV " + name + " modified to " + value);
