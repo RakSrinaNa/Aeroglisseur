@@ -41,7 +41,10 @@ public class GamepadHandler extends Thread
 				break;
 		}
 		if(controller.equals(null))
+		{
+			Main.logger.log(Level.SEVERE, "No gamepad found!");
 			throw new Exception();
+		}
 		Main.logger.log(Level.FINE, "Controller: " + controller.getName() + "\tAxis: " + controller.getAxisCount() + "\tButtons: " + controller.getButtonCount());
 		Main.logger.log(Level.FINE, "Waiting for joysticks to be set to the middle...");
 		while(controller.getAxisValue(0) != 0 || controller.getAxisValue(1) != 0 || controller.getAxisValue(2) != 0 || controller.getAxisValue(3) != 0)
