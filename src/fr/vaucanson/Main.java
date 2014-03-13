@@ -25,25 +25,16 @@ public class Main
 		new Interface();
 		try
 		{
-			sender = new Sender("192.168.0.18", "http://192.168.0.18/sd/index.php");
-			sender.start();
+			//sender = new Sender("192.168.0.18", "http://192.168.0.18/sd/index.php");
+			//sender.start();
 		}
 		catch(Exception e)
 		{
-			logger.log(Level.SEVERE, "Can't reach " + e.getMessage() + "\tTrying on local server...");
-			try
-            {
-	            sender = new Sender("127.0.0.1", "http://127.0.0.1/PI/index.html");
-	            sender.start();
-            }
-            catch(Exception e1)
-            {
-            	logger.log(Level.SEVERE, "Can't reach " + e.getMessage() + "\tClosing program!");
-            	for(Frame f : Interface.getFrames())
-            		f.dispose();
-            }
+            logger.log(Level.SEVERE, "Can't reach " + e.getMessage() + "\tClosing program!");
+            for(Frame f : Interface.getFrames())
+            	f.dispose();
 		}
-		gamepad = new GamepadHandler();
-		gamepad.run();
+		//gamepad = new GamepadHandler();
+		//gamepad.run();
 	}
 }
