@@ -1,5 +1,6 @@
 package fr.vaucanson;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -25,7 +26,8 @@ public class Interface extends JFrame
 {
 	private static final long serialVersionUID = 7231194594050358481L;
 	public JFrame mainFrame;
-	private static JPanel contentPanel, camPanel, controlPanel, topPanel;
+	private static JPanel contentPanel, camPanel, controlPanel, topPanel, infoPanel;
+	private static JLabel infoLabel;
 	private static Hashtable<String, Object> frameObjects;
 	private static HashMap<String, Integer> requests;
 	
@@ -62,9 +64,13 @@ public class Interface extends JFrame
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		topPanel = new JPanel();
 		topPanel.setLayout(new GridBagLayout());
+		infoPanel = new JPanel();
+		infoPanel.setLayout(new BorderLayout());
+		infoPanel.setPreferredSize(new Dimension(750, 20));
+		infoLabel = new JLabel();
+		infoLabel.setPreferredSize(new Dimension(750, 20));
 		JLabel topAero = new JLabel("A\351roglisseur");
 		JLabel topCam = new JLabel("Cam\351ra");
-		
 		
 		addSlider(0, 1, 1, 0, "st", labelTableSustentation, controlPanel);
 		addSlider(0, 9225, 250, 0, "vi", labelTableSpeed, controlPanel);
@@ -73,6 +79,7 @@ public class Interface extends JFrame
 		addSlider(0, 100, 10, 50, "ch", labelTableOrientation, camPanel);
 		topAero.setAlignmentX(SwingConstants.CENTER);
 		topCam.setAlignmentX(SwingConstants.CENTER);
+		infoLabel.setAlignmentX(SwingConstants.CENTER);
 		
 		/***************************************************************************************************/
 		
@@ -82,6 +89,9 @@ public class Interface extends JFrame
 		mainFrame.setResizable(true);
 		mainFrame.setAlwaysOnTop(true);
 		mainFrame.setVisible(true);
+		mainFrame.setResizable(false);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setLocationRelativeTo(null);
 		mainFrame.addWindowListener(new WindowListener()
 		{
 			@Override
@@ -132,10 +142,14 @@ public class Interface extends JFrame
 		
 		topPanel.add(topAero, constraints);
 		
-		constraints.insets = new Insets(0,0,10,0);
 		constraints.gridx = 1;
+		constraints.insets = new Insets(0,0,10,0);
 		
 		topPanel.add(topCam, constraints);
+		
+		/*************INFOS*****************************/
+		
+		infoPanel.add(infoLabel, BorderLayout.CENTER);
 		
 		/*************CONTROLS**************************/	
 		
@@ -145,9 +159,12 @@ public class Interface extends JFrame
 		constraints.gridy = 0;
 		constraints.gridx = 0;
 		constraints.weightx = 0.5;
+		
 		contentPanel.add(controlPanel, constraints);
-		constraints.insets = new Insets(0,0,10,0);
+		
 		constraints.gridx = 1;
+		constraints.insets = new Insets(0,0,10,0);
+		
 		contentPanel.add(camPanel, constraints);
 		
 		/***********BUILDING FRMAE***********************/
@@ -157,15 +174,23 @@ public class Interface extends JFrame
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridy = 0;
 		constraints.gridx = 0;
-		constraints.ipadx = 700;
-		constraints.weighty = 0.01;
+		constraints.ipadx = 500;
+		constraints.weighty = 0.05;
+		
 		mainFrame.add(topPanel, constraints);
-		constraints.insets = new Insets(0,0,0,10);
-		constraints.weighty = 0.99;
+		
 		constraints.gridy = 1;
+		constraints.insets = new Insets(0,0,0,10);
+		
+		mainFrame.add(infoPanel, constraints);
+		
+		constraints.weighty = 0.90;
+		constraints.gridy = 2;
+		constraints.insets = new Insets(0,0,0,10);
+		
 		mainFrame.add(contentPanel, constraints);
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setLocationRelativeTo(null);
+		
+		/**************************************************/
 		mainFrame.pack();
 	}
 	
