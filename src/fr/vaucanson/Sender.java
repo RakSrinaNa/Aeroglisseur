@@ -18,6 +18,12 @@ public class Sender extends Thread
 	private static final String[] keys = {"or", "st", "vi", "cv", "ch"};
 	private static ArrayList<Long> times;
 
+	/**
+	 * Used to initialize the connection with the Arduino Yun
+	 * 
+	 * @return True if the connection is set
+	 * @throws Exception If there were an error with the initialization
+	 */
 	private static boolean init() throws Exception
 	{
 		Main.logger.log(Level.INFO, "Initializing sender...");
@@ -29,9 +35,16 @@ public class Sender extends Thread
 		System.setProperty("http.proxyPort", "8080");
 		if(inet.isReachable(5000))
 			return true;
-		throw new Exception();
+		throw new Exception("Can not connect to the Arduino");
 	}
 
+	/**
+	 * Used to send a GET command to the Arduino
+	 * 
+	 * @param params The GET params to send
+	 * @return The response by the server
+	 * @throws Exception If there were an error with the connection
+	 */
 	synchronized private String sendGet(String params) throws Exception
 	{
 		Date startDate = new Date();
@@ -40,8 +53,8 @@ public class Sender extends Thread
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 		int responseCode = connection.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
+		Main.logger.log(Level.INFO, "\nSending 'GET' request to URL : " + url);
+		Main.logger.log(Level.INFO, "Response Code : " + responseCode);
 		BufferedReader inputSream = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		String inputLine;
 		StringBuffer response = new StringBuffer();
@@ -52,10 +65,17 @@ public class Sender extends Thread
 		long average = 0;
 		for(long l : times)
 			average += l;
-		System.out.println("Done in " + times.get(times.size() - 1) + " ms\tAverage: " + (average / times.size()));
+		Main.logger.log(Level.INFO, "Done in " + times.get(times.size() - 1) + " ms\tAverage: " + (average / times.size()));
 		return response.toString();
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param IP1 The IP for the ping test
+	 * @param IP2 The URL for the Arduino internet control page
+	 * @throws Exception If there were an error with the connection
+	 */
 	public Sender(String IP1, String IP2) throws Exception
 	{
 		Sender.IP_PING = IP1;
@@ -73,6 +93,9 @@ public class Sender extends Thread
 		Main.logger.log(Level.INFO, "Sender initialized on " + IP_PING + " sending requests to " + IP_URL + "!");
 	}
 
+	/**
+	 * Check every 50ms if there is an information to send and send it
+	 */
 	@Override
 	public void run()
 	{
