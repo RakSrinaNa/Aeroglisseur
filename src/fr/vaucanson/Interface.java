@@ -1,41 +1,50 @@
 package fr.vaucanson;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.logging.Level;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultStyledDocument;
 
 public class Interface extends JFrame
 {
 	private static final long serialVersionUID = 7231194594050358481L;
 	public JFrame mainFrame;
-	private static JPanel contentPanel, camPanel, controlPanel, topPanel, infoPanel;
-	private static JLabel infoLabel;
+	private static GridBagLayout mainLayout;
+	private static JPanel contentPanel, camPanel, controlPanel;
 	private static Hashtable<String, Object> frameObjects;
 	private static HashMap<String, Integer> requests;
+	private static int frameWidth, frameHeight;
 	
 	/**
 	 * Contructor
 	 */
 	public Interface()
 	{
+		frameWidth = 800;
+		frameHeight = 200;
 		requests = new HashMap<String, Integer>();
 		frameObjects = new Hashtable<String, Object>();
 		Hashtable<Integer, JLabel> labelTableOrientation = new Hashtable<Integer,JLabel>();
@@ -62,98 +71,81 @@ public class Interface extends JFrame
 		camPanel.setLayout(new BoxLayout(camPanel, BoxLayout.Y_AXIS));
 		controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-		topPanel = new JPanel();
-		topPanel.setLayout(new GridBagLayout());
-		infoPanel = new JPanel();
-		infoPanel.setLayout(new BorderLayout());
-		infoPanel.setPreferredSize(new Dimension(750, 20));
-		infoLabel = new JLabel();
-		infoLabel.setPreferredSize(new Dimension(750, 20));
-		JLabel topAero = new JLabel("A\351roglisseur");
-		JLabel topCam = new JLabel("Cam\351ra");
-		
+
+		mainLayout = new GridBagLayout();
+		Border loweredetched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+		TitledBorder titleCam = BorderFactory.createTitledBorder(loweredetched, "Cam\351ra");
+		titleCam.setTitleJustification(TitledBorder.CENTER);
+		camPanel.setBorder(titleCam); 
+		TitledBorder titleControl = BorderFactory.createTitledBorder(loweredetched, "Contr\364les");
+		titleControl.setTitleJustification(TitledBorder.CENTER);
+		controlPanel.setBorder(titleControl); 
 		addSlider(0, 1, 1, 0, "st", labelTableSustentation, controlPanel);
 		addSlider(0, 9225, 250, 0, "vi", labelTableSpeed, controlPanel);
 		addSlider(0, 100, 10, 50, "or", labelTableOrientation, controlPanel);
 		addSlider(0, 100, 10, 50, "cv", labelTableCamVert, camPanel);
 		addSlider(0, 100, 10, 50, "ch", labelTableOrientation, camPanel);
-		topAero.setAlignmentX(SwingConstants.CENTER);
-		topCam.setAlignmentX(SwingConstants.CENTER);
-		infoLabel.setAlignmentX(SwingConstants.CENTER);
 		
 		/***************************************************************************************************/
 		
 		mainFrame = new JFrame("Controles de l'aeroglisseur");
-		mainFrame.setLayout(new GridBagLayout());
-		mainFrame.setPreferredSize(new Dimension(800, 450));
+		mainFrame.setMinimumSize(new Dimension(850, frameHeight));
+		mainFrame.addComponentListener(new ComponentListener()
+		{
+			@Override
+			public void componentHidden(ComponentEvent arg0) 
+			{
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent arg0) 
+			{
+			}
+
+			@Override
+			public void componentResized(ComponentEvent arg0)
+			{
+				if(arg0.getComponent() instanceof JFrame)
+				{
+					frameWidth = ((JFrame)arg0.getComponent()).getWidth();
+					frameHeight = ((JFrame)arg0.getComponent()).getHeight();
+				}
+				else if(arg0.getComponent() instanceof JPanel)
+				{
+					frameWidth = ((JPanel)arg0.getComponent()).getWidth();
+					frameHeight = ((JPanel)arg0.getComponent()).getHeight();
+				}
+				resize();
+			}
+
+			@Override
+			public void componentShown(ComponentEvent arg0) 
+			{
+				if(arg0.getComponent() instanceof JFrame)
+				{
+					frameWidth = ((JFrame)arg0.getComponent()).getWidth();
+					frameHeight = ((JFrame)arg0.getComponent()).getHeight();
+				}
+				else if(arg0.getComponent() instanceof JPanel)
+				{
+					frameWidth = ((JPanel)arg0.getComponent()).getWidth();
+					frameHeight = ((JPanel)arg0.getComponent()).getHeight();
+				}
+				resize();
+			}
+		});
+		mainFrame.setLayout(mainLayout);
+		mainFrame.setPreferredSize(new Dimension(frameWidth, 450));
 		mainFrame.setResizable(true);
 		mainFrame.setAlwaysOnTop(true);
 		mainFrame.setVisible(true);
-		mainFrame.setResizable(false);
+		//mainFrame.setResizable(false);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setLocationRelativeTo(null);
-		mainFrame.addWindowListener(new WindowListener()
-		{
-			@Override
-			public void windowActivated(final WindowEvent e)
-			{
-			}
-
-			@Override
-			public void windowClosed(final WindowEvent e)
-			{
-			}
-
-			@Override
-			public void windowClosing(final WindowEvent e)
-			{
-				mainFrame.dispose();
-			}
-
-			@Override
-			public void windowDeactivated(final WindowEvent e)
-			{
-			}
-
-			@Override
-			public void windowDeiconified(final WindowEvent e)
-			{
-			}
-
-			@Override
-			public void windowIconified(final WindowEvent e)
-			{
-			}
-
-			@Override
-			public void windowOpened(final WindowEvent e)
-			{
-			}
-		});
-		
-		/************TOP FRAME***************************/
-		
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.anchor = GridBagConstraints.PAGE_START;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.gridy = 0;
-		constraints.gridx = 0;
-		constraints.weightx = 0.5;
-		
-		topPanel.add(topAero, constraints);
-		
-		constraints.gridx = 1;
-		constraints.insets = new Insets(0,0,10,0);
-		
-		topPanel.add(topCam, constraints);
-		
-		/*************INFOS*****************************/
-		
-		infoPanel.add(infoLabel, BorderLayout.CENTER);
 		
 		/*************CONTROLS**************************/	
 		
-		constraints = new GridBagConstraints();
+		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.PAGE_START;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridy = 0;
@@ -174,24 +166,32 @@ public class Interface extends JFrame
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridy = 0;
 		constraints.gridx = 0;
-		constraints.ipadx = 500;
-		constraints.weighty = 0.05;
-		
-		mainFrame.add(topPanel, constraints);
-		
-		constraints.gridy = 1;
-		constraints.insets = new Insets(0,0,0,10);
-		
-		mainFrame.add(infoPanel, constraints);
-		
-		constraints.weighty = 0.90;
-		constraints.gridy = 2;
-		constraints.insets = new Insets(0,0,0,10);
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+		constraints.ipady = frameHeight;
+		constraints.ipadx = frameWidth / 2;
 		
 		mainFrame.add(contentPanel, constraints);
 		
 		/**************************************************/
+		
 		mainFrame.pack();
+	}
+	
+	private void resize()
+	{
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.NORTH;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.gridy = 0;
+		constraints.gridx = 0;
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+		constraints.ipady = frameHeight;
+		constraints.ipadx = frameWidth / 2;
+		mainLayout.setConstraints(contentPanel, constraints);
+		mainFrame.revalidate();
+		mainFrame.repaint();
 	}
 	
 	/**
@@ -209,7 +209,7 @@ public class Interface extends JFrame
 	private void addSlider(int min, int max, int majT, int base, final String key, Hashtable<Integer, JLabel> labels, Container cont)
 	{
 		JPanel tempPanel = new JPanel(new GridBagLayout());
-		JLabel tempLabel = new JLabel();
+		JTextField tempLabel = new JTextField();
 		JSlider tempSlider = new JSlider();
 		
 		tempPanel.setPreferredSize(new Dimension(570, 66));
@@ -236,13 +236,31 @@ public class Interface extends JFrame
 				changeValue(key, 0);
 			}
 		});
-		
+		tempLabel.setEditable(false);
+		tempLabel.setOpaque(false);
+		tempLabel.setBorder(null);
+		if(key == "st")
+		{
+			DefaultStyledDocument doc = new DefaultStyledDocument();
+			doc.setDocumentFilter(new DocumentSustentFilter());
+			tempLabel.setDocument(doc);
+		}
+		tempLabel.setMinimumSize(new Dimension(10, 10));
+		tempLabel.setPreferredSize(new Dimension(10, 10));
+		tempLabel.setMaximumSize(new Dimension(10, 10));
 		tempLabel.setBackground(Color.GRAY);
 		tempLabel.setText(String.valueOf(tempSlider.getValue()));
 		tempLabel.setHorizontalAlignment(JLabel.CENTER);
 		tempLabel.setFocusable(false);
 		tempLabel.setToolTipText("T" + key);
-		
+		tempLabel.addPropertyChangeListener("text", new PropertyChangeListener()
+		{
+			@Override
+			public void propertyChange(PropertyChangeEvent arg0) 
+			{
+				
+			}
+		});
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -273,7 +291,7 @@ public class Interface extends JFrame
 	public static void setValue(String key, float value)
 	{
 		JSlider slider = ((JSlider)frameObjects.get("S" + key));
-		JLabel lab = ((JLabel)frameObjects.get("T" + key));
+		JTextField lab = ((JTextField)frameObjects.get("T" + key));
 		int nValue = (int) ((slider.getMaximum() / 2) + (value * (slider.getMaximum() / 2)));
 		slider.setValue(nValue);
 		addToSend(key, slider.getValue());
@@ -292,7 +310,7 @@ public class Interface extends JFrame
 	public static void changeValue(String key, int value)
 	{
 		JSlider slider = ((JSlider)frameObjects.get("S" + key));
-		JLabel lab = ((JLabel)frameObjects.get("T" + key));
+		JTextField lab = ((JTextField)frameObjects.get("T" + key));
 		slider.setValue(slider.getValue() + value);
 		addToSend(key, slider.getValue());
 		lab.setText(String.valueOf(slider.getValue()));
