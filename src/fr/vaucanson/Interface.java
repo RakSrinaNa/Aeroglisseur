@@ -21,12 +21,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.DefaultStyledDocument;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
 
 public class Interface extends JFrame
 {
@@ -209,7 +213,7 @@ public class Interface extends JFrame
 	private void addSlider(int min, int max, int majT, int base, final String key, Hashtable<Integer, JLabel> labels, Container cont)
 	{
 		JPanel tempPanel = new JPanel(new GridBagLayout());
-		JTextField tempLabel = new JTextField();
+		final JTextField tempLabel = new JTextField();
 		JSlider tempSlider = new JSlider();
 		
 		tempPanel.setPreferredSize(new Dimension(570, 66));
@@ -239,17 +243,73 @@ public class Interface extends JFrame
 		tempLabel.setEditable(false);
 		tempLabel.setOpaque(false);
 		tempLabel.setBorder(null);
-		if(key == "st")
-		{
-			DefaultStyledDocument doc = new DefaultStyledDocument();
-			doc.setDocumentFilter(new DocumentSustentFilter());
-			tempLabel.setDocument(doc);
-		}
 		tempLabel.setMinimumSize(new Dimension(10, 10));
 		tempLabel.setPreferredSize(new Dimension(10, 10));
 		tempLabel.setMaximumSize(new Dimension(10, 10));
 		tempLabel.setBackground(Color.GRAY);
 		tempLabel.setText(String.valueOf(tempSlider.getValue()));
+		if(key == "st")
+		{
+			tempLabel.getDocument().addDocumentListener(new DocumentListener()
+			{
+				@Override
+				public void changedUpdate(DocumentEvent arg0) {
+				}
+
+				@Override
+				public void insertUpdate(final DocumentEvent arg0) {
+					try {
+						String text = arg0.getDocument().getText(0, arg0.getDocument().getLength());
+						System.out.println(text);
+						if(text.equals("1"))
+						{
+							SwingUtilities.invokeLater(new Runnable()
+							{
+								@Override
+								public void run() 
+								{
+									try 
+									{
+										arg0.getDocument().remove(0, arg0.getDocument().getLength());
+										arg0.getDocument().insertString(0, "ON", new SimpleAttributeSet());
+									} 
+									catch (BadLocationException e) 
+									{
+										e.printStackTrace();
+									}
+								}
+							});
+						}
+						else
+						{
+							SwingUtilities.invokeLater(new Runnable()
+							{
+								@Override
+								public void run() 
+								{
+									try 
+									{
+										arg0.getDocument().remove(0, arg0.getDocument().getLength());
+										arg0.getDocument().insertString(0, "OFF", new SimpleAttributeSet());
+									} 
+									catch (BadLocationException e) 
+									{
+										e.printStackTrace();
+									}
+								}
+							});
+						}
+						System.out.println();
+					} catch (BadLocationException e) {
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent arg0) {
+				}
+			});
+		}
 		tempLabel.setHorizontalAlignment(JLabel.CENTER);
 		tempLabel.setFocusable(false);
 		tempLabel.setToolTipText("T" + key);
@@ -258,7 +318,6 @@ public class Interface extends JFrame
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) 
 			{
-				
 			}
 		});
 		GridBagConstraints constraints = new GridBagConstraints();
