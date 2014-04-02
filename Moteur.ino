@@ -10,10 +10,8 @@ const String horizontal_cam_key = "ch";
 const String vertical_cam_key = "cv";
 const String values_file = "variables.txt";
 
-Servo motor1;
-//Servo motor2;
-Servo motor3;
-//Servo motor4;
+Servo motorSustentation;
+Servo motorDirection;
 Servo servoMotor;
 Servo servoVertCam;
 Servo servoHorCam;
@@ -22,7 +20,7 @@ int speed_value;
 int orientation_value;
 int sustentation_value;
 int vetical_cam_value;
-int horizontale_cam_value;
+int horizontal_cam_value;
 
 void printMessage(String message)
 {
@@ -44,13 +42,13 @@ int RPMToServoSpeed(unsigned int rpm)
 
 void writeToMotors(String key, int value)
 {
-    if(value < 0 || value > 10000 || (key == orientation_key && value == orientation_value) || (key == speed_key && value == speed_value) || (key == sustentation_key && value == sustentation_value))
+    if(value < 0 || value > 10000 || (key == orientation_key && value == orientation_value) || (key == speed_key && value == speed_value) || (key == sustentation_key && value == sustentation_value) || (key == horizontam_key && value == horizontal_value) || (key == vertical_key && value == vertical_value))
         return;
     printMessage("Receiving key " + key + " with value " + value);
     if(key == speed_key)
     {
         printMessage("Setting speed to " + String(value) + " which is " + String(RPMToServoSpeed(value)));
-        motor1.write(RPMToServoSpeed(value));
+        motorDirection.write(RPMToServoSpeed(value));
         speed_value = value;
     }
     else if(key == orientation_key)
@@ -64,19 +62,20 @@ void writeToMotors(String key, int value)
         if(value == 1)
         {
             printMessage("Switching sustentation ON");
-            motor3.write(100);
+            motorSustentation.write(100);
             sustentation_value = 1;
         }
         else
         {
             printMessage("Switching sustentation OFF");
             sustentation_value = value;
-            motor3.write(90);
+            motorSustentation.write(90);
         }
+     }
      else if(key == horizontal_cam_key)
     {
         printMessage("Setting orientation CamHorizontal to " + String(value));
-        horizontale_cam_value = value;
+        horizontal_cam_value = value;
         servoHorCam.write(oriToDegrees(value));
    
     }
@@ -115,8 +114,10 @@ void initAero()
     process.addParameter("/mnt/sd/arduino/www/" + values_file);
     process.run();
     speed_value = 0;
-    orientation_value = 50;
+    orientation_value = 90;
     sustentation_value = 0;
+    vetical_cam_value = 90;
+    horizontal_cam_value = 90;
 }
 
 String readValuesFile()
@@ -142,15 +143,13 @@ void setup()
     pinMode(13, OUTPUT);
     digitalWrite(13, LOW);
     digitalWrite(13, HIGH);
-    motor3.attach(11); //Moteur 3 (Blanc) -> O0
-    motor1.attach(10); //Moteur 4 (Marron) -> O1
-    //motor4.attach(9);  //Moteur 3 (Rouge) -> O2
-    //motor2.attach(6); //Moteur 2 (Orange) -> O3
-    servoMotor.attach(9);
-    servoVertCam.attach(/*TODO PIN*/);
-    servoHorCam.attach(/*TODO PIN*/);
-    motor1.write(90);
-    motor3.write(90);
+    motorDirection.attach(10); //Moteur 3 (Blanc) -> O0
+    motorSustentation.attach(11); //Moteur 4 (Marron) -> O1
+    servoMotor.attach(9); //O2
+    servoVertCam.attach(6); //O3
+    servoHorCam.attach(5); //O4
+    motorSustentation.write(90);
+    motorDirection.write(90);
     servoMotor.write(90);
     servoVertCam.write(90);
     servoHorCam.write(90);
