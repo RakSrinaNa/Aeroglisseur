@@ -42,7 +42,7 @@ public class Interface extends JFrame
 	private static int frameWidth, frameHeight;
 
 	/**
-	 * Contructor
+	 * Constructor
 	 */
 	public Interface()
 	{
@@ -228,7 +228,7 @@ public class Interface extends JFrame
 		tempLabel.setMaximumSize(new Dimension(10, 10));
 		tempLabel.setBackground(Color.GRAY);
 		tempLabel.setText(String.valueOf(tempSlider.getValue()));
-		if(key == "st")
+		if(false && key == "st")
 		{
 			tempLabel.getDocument().addDocumentListener(new DocumentListener()
 			{
@@ -329,7 +329,18 @@ public class Interface extends JFrame
 	{
 		JSlider slider = ((JSlider) frameObjects.get("S" + key));
 		JTextField lab = ((JTextField) frameObjects.get("T" + key));
-		int nValue = (int) ((slider.getMaximum() / 2) + (value * (slider.getMaximum() / 2)));
+		int nValue;
+		if(key.equals("cv"))
+		{
+			if(value >= 0)
+				nValue = (int) (70 + (value * 30f));
+			else
+				nValue = (int) (70 + (value * 70f));
+		}
+		else if(key.equals("vi"))
+			nValue = (int) (value * slider.getMaximum());
+		else
+			nValue = (int) ((slider.getMaximum() / 2) + (value * (slider.getMaximum() / 2)));
 		slider.setValue(nValue);
 		addToSend(key, slider.getValue());
 		lab.setText(String.valueOf(slider.getValue()));
@@ -348,7 +359,7 @@ public class Interface extends JFrame
 	{
 		JSlider slider = ((JSlider) frameObjects.get("S" + key));
 		JTextField lab = ((JTextField) frameObjects.get("T" + key));
-		slider.setValue(slider.getValue() + value);
+		slider.setValue(value != -9999 ? slider.getValue() + value : (slider.getValue() == 0 ? 1 : 0));
 		addToSend(key, slider.getValue());
 		lab.setText(String.valueOf(slider.getValue()));
 		frameObjects.put("S" + key, slider);

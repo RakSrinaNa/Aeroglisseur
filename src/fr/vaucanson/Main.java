@@ -25,8 +25,8 @@ public class Main
 		new Interface();
 		try
 		{
-			// sender = new Sender("192.168.240.1", "http://192.168.240.1/sd/index.php");
-			// sender.start();
+			sender = new Sender("192.168.240.1", "http://192.168.240.1/sd/index.php");
+			sender.start();
 		}
 		catch(Exception e)
 		{
