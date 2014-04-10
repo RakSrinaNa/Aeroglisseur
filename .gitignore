@@ -1,10 +1,8 @@
-*.class
-*.txt
 *.1
 *.lck
-
 /.metadata
 /.settings
 /bin
-.classpath
-.project
+/.classpath
+/.project
+/log.*
