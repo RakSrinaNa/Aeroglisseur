@@ -32,6 +32,10 @@ public class GamepadHandler extends Thread
 		else
 		{
 			ACT_SUSTENT = "A";
+			VALUE_CAM_OR_VERT = "ry";
+			VALUE_CAM_OR_HOR = "rx";
+			VALUE_SPEED = "y";
+			VALUE_ORIENTATION = "x";
 		}
 	}
 
