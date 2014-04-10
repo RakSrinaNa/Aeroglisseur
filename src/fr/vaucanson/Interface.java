@@ -13,7 +13,6 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.logging.Level;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -41,7 +40,7 @@ public class Interface extends JFrame
 	private static Hashtable<String, Object> frameObjects;
 	private static HashMap<String, Integer> requests;
 	private static int frameWidth, frameHeight;
-	
+
 	/**
 	 * Contructor
 	 */
@@ -51,89 +50,82 @@ public class Interface extends JFrame
 		frameHeight = 200;
 		requests = new HashMap<String, Integer>();
 		frameObjects = new Hashtable<String, Object>();
-		Hashtable<Integer, JLabel> labelTableOrientation = new Hashtable<Integer,JLabel>();
+		Hashtable<Integer, JLabel> labelTableOrientation = new Hashtable<Integer, JLabel>();
 		labelTableOrientation.put(0, new JLabel("Gauche"));
 		labelTableOrientation.put(50, new JLabel("Devant"));
 		labelTableOrientation.put(100, new JLabel("Droite"));
-		Hashtable<Integer, JLabel> labelTableCamVert = new Hashtable<Integer,JLabel>();
+		Hashtable<Integer, JLabel> labelTableCamVert = new Hashtable<Integer, JLabel>();
 		labelTableCamVert.put(0, new JLabel("Bas"));
-		labelTableCamVert.put(50, new JLabel("Devant"));
+		labelTableCamVert.put(70, new JLabel("Devant"));
 		labelTableCamVert.put(100, new JLabel("Haut"));
-		Hashtable<Integer, JLabel> labelTableSustentation = new Hashtable<Integer,JLabel>();
+		Hashtable<Integer, JLabel> labelTableSustentation = new Hashtable<Integer, JLabel>();
 		labelTableSustentation.put(0, new JLabel("OFF"));
 		labelTableSustentation.put(1, new JLabel("ON"));
-		Hashtable<Integer, JLabel> labelTableSpeed = new Hashtable<Integer,JLabel>();
+		Hashtable<Integer, JLabel> labelTableSpeed = new Hashtable<Integer, JLabel>();
 		labelTableSpeed.put(0, new JLabel("0"));
 		labelTableSpeed.put(4612, new JLabel("4612"));
 		labelTableSpeed.put(9225, new JLabel("9225"));
-		
 		/***************************************************************************************************/
-		
 		contentPanel = new JPanel();
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 		camPanel = new JPanel();
 		camPanel.setLayout(new BoxLayout(camPanel, BoxLayout.Y_AXIS));
 		controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-
 		mainLayout = new GridBagLayout();
 		Border loweredetched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 		TitledBorder titleCam = BorderFactory.createTitledBorder(loweredetched, "Cam\351ra");
 		titleCam.setTitleJustification(TitledBorder.CENTER);
-		camPanel.setBorder(titleCam); 
+		camPanel.setBorder(titleCam);
 		TitledBorder titleControl = BorderFactory.createTitledBorder(loweredetched, "Contr\364les");
 		titleControl.setTitleJustification(TitledBorder.CENTER);
-		controlPanel.setBorder(titleControl); 
+		controlPanel.setBorder(titleControl);
 		addSlider(0, 1, 1, 0, "st", labelTableSustentation, controlPanel);
 		addSlider(0, 9225, 250, 0, "vi", labelTableSpeed, controlPanel);
 		addSlider(0, 100, 10, 50, "or", labelTableOrientation, controlPanel);
-		addSlider(0, 100, 10, 50, "cv", labelTableCamVert, camPanel);
+		addSlider(0, 100, 10, 70, "cv", labelTableCamVert, camPanel);
 		addSlider(0, 100, 10, 50, "ch", labelTableOrientation, camPanel);
-		
 		/***************************************************************************************************/
-		
 		mainFrame = new JFrame("Controles de l'aeroglisseur");
 		mainFrame.setMinimumSize(new Dimension(850, frameHeight));
 		mainFrame.addComponentListener(new ComponentListener()
 		{
 			@Override
-			public void componentHidden(ComponentEvent arg0) 
-			{
-			}
+			public void componentHidden(ComponentEvent arg0)
+			{}
 
 			@Override
-			public void componentMoved(ComponentEvent arg0) 
-			{
-			}
+			public void componentMoved(ComponentEvent arg0)
+			{}
 
 			@Override
 			public void componentResized(ComponentEvent arg0)
 			{
 				if(arg0.getComponent() instanceof JFrame)
 				{
-					frameWidth = ((JFrame)arg0.getComponent()).getWidth();
-					frameHeight = ((JFrame)arg0.getComponent()).getHeight();
+					frameWidth = ((JFrame) arg0.getComponent()).getWidth();
+					frameHeight = ((JFrame) arg0.getComponent()).getHeight();
 				}
 				else if(arg0.getComponent() instanceof JPanel)
 				{
-					frameWidth = ((JPanel)arg0.getComponent()).getWidth();
-					frameHeight = ((JPanel)arg0.getComponent()).getHeight();
+					frameWidth = ((JPanel) arg0.getComponent()).getWidth();
+					frameHeight = ((JPanel) arg0.getComponent()).getHeight();
 				}
 				resize();
 			}
 
 			@Override
-			public void componentShown(ComponentEvent arg0) 
+			public void componentShown(ComponentEvent arg0)
 			{
 				if(arg0.getComponent() instanceof JFrame)
 				{
-					frameWidth = ((JFrame)arg0.getComponent()).getWidth();
-					frameHeight = ((JFrame)arg0.getComponent()).getHeight();
+					frameWidth = ((JFrame) arg0.getComponent()).getWidth();
+					frameHeight = ((JFrame) arg0.getComponent()).getHeight();
 				}
 				else if(arg0.getComponent() instanceof JPanel)
 				{
-					frameWidth = ((JPanel)arg0.getComponent()).getWidth();
-					frameHeight = ((JPanel)arg0.getComponent()).getHeight();
+					frameWidth = ((JPanel) arg0.getComponent()).getWidth();
+					frameHeight = ((JPanel) arg0.getComponent()).getHeight();
 				}
 				resize();
 			}
@@ -143,28 +135,21 @@ public class Interface extends JFrame
 		mainFrame.setResizable(true);
 		mainFrame.setAlwaysOnTop(true);
 		mainFrame.setVisible(true);
-		//mainFrame.setResizable(false);
+		// mainFrame.setResizable(false);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setLocationRelativeTo(null);
-		
-		/*************CONTROLS**************************/	
-		
+		/************* CONTROLS **************************/
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.PAGE_START;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridy = 0;
 		constraints.gridx = 0;
 		constraints.weightx = 0.5;
-		
 		contentPanel.add(controlPanel, constraints);
-		
 		constraints.gridx = 1;
-		constraints.insets = new Insets(0,0,10,0);
-		
+		constraints.insets = new Insets(0, 0, 10, 0);
 		contentPanel.add(camPanel, constraints);
-		
-		/***********BUILDING FRMAE***********************/
-		
+		/*********** BUILDING FRMAE ***********************/
 		constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -174,14 +159,11 @@ public class Interface extends JFrame
 		constraints.weighty = 1;
 		constraints.ipady = frameHeight;
 		constraints.ipadx = frameWidth / 2;
-		
 		mainFrame.add(contentPanel, constraints);
-		
 		/**************************************************/
-		
 		mainFrame.pack();
 	}
-	
+
 	private void resize()
 	{
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -197,7 +179,7 @@ public class Interface extends JFrame
 		mainFrame.revalidate();
 		mainFrame.repaint();
 	}
-	
+
 	/**
 	 * Used to add a slider with his label
 	 * 
@@ -215,10 +197,8 @@ public class Interface extends JFrame
 		JPanel tempPanel = new JPanel(new GridBagLayout());
 		final JTextField tempLabel = new JTextField();
 		JSlider tempSlider = new JSlider();
-		
 		tempPanel.setPreferredSize(new Dimension(570, 66));
 		tempPanel.setFocusable(false);
-		
 		tempSlider.setValue(min);
 		tempSlider.setMaximum(max);
 		tempSlider.setToolTipText("S" + key);
@@ -253,12 +233,14 @@ public class Interface extends JFrame
 			tempLabel.getDocument().addDocumentListener(new DocumentListener()
 			{
 				@Override
-				public void changedUpdate(DocumentEvent arg0) {
-				}
+				public void changedUpdate(DocumentEvent arg0)
+				{}
 
 				@Override
-				public void insertUpdate(final DocumentEvent arg0) {
-					try {
+				public void insertUpdate(final DocumentEvent arg0)
+				{
+					try
+					{
 						String text = arg0.getDocument().getText(0, arg0.getDocument().getLength());
 						System.out.println(text);
 						if(text.equals("1"))
@@ -266,14 +248,14 @@ public class Interface extends JFrame
 							SwingUtilities.invokeLater(new Runnable()
 							{
 								@Override
-								public void run() 
+								public void run()
 								{
-									try 
+									try
 									{
 										arg0.getDocument().remove(0, arg0.getDocument().getLength());
 										arg0.getDocument().insertString(0, "ON", new SimpleAttributeSet());
-									} 
-									catch (BadLocationException e) 
+									}
+									catch(BadLocationException e)
 									{
 										e.printStackTrace();
 									}
@@ -285,14 +267,14 @@ public class Interface extends JFrame
 							SwingUtilities.invokeLater(new Runnable()
 							{
 								@Override
-								public void run() 
+								public void run()
 								{
-									try 
+									try
 									{
 										arg0.getDocument().remove(0, arg0.getDocument().getLength());
 										arg0.getDocument().insertString(0, "OFF", new SimpleAttributeSet());
-									} 
-									catch (BadLocationException e) 
+									}
+									catch(BadLocationException e)
 									{
 										e.printStackTrace();
 									}
@@ -300,14 +282,16 @@ public class Interface extends JFrame
 							});
 						}
 						System.out.println();
-					} catch (BadLocationException e) {
+					}
+					catch(BadLocationException e)
+					{
 						e.printStackTrace();
 					}
 				}
 
 				@Override
-				public void removeUpdate(DocumentEvent arg0) {
-				}
+				public void removeUpdate(DocumentEvent arg0)
+				{}
 			});
 		}
 		tempLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -316,9 +300,8 @@ public class Interface extends JFrame
 		tempLabel.addPropertyChangeListener("text", new PropertyChangeListener()
 		{
 			@Override
-			public void propertyChange(PropertyChangeEvent arg0) 
-			{
-			}
+			public void propertyChange(PropertyChangeEvent arg0)
+			{}
 		});
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.CENTER;
@@ -326,20 +309,15 @@ public class Interface extends JFrame
 		constraints.gridy = 0;
 		constraints.gridx = 0;
 		constraints.weightx = 0.85;
-		
 		tempPanel.add(tempSlider, constraints);
-		
 		constraints.gridx = 1;
 		constraints.weightx = 0.15;
-		
 		tempPanel.add(tempLabel, constraints);
-		
 		cont.add(tempPanel);
-		
 		frameObjects.put("T" + key, tempLabel);
 		frameObjects.put("S" + key, tempSlider);
 	}
-	
+
 	/**
 	 * Used to set a value to an ID
 	 * 
@@ -349,8 +327,8 @@ public class Interface extends JFrame
 	 */
 	public static void setValue(String key, float value)
 	{
-		JSlider slider = ((JSlider)frameObjects.get("S" + key));
-		JTextField lab = ((JTextField)frameObjects.get("T" + key));
+		JSlider slider = ((JSlider) frameObjects.get("S" + key));
+		JTextField lab = ((JTextField) frameObjects.get("T" + key));
 		int nValue = (int) ((slider.getMaximum() / 2) + (value * (slider.getMaximum() / 2)));
 		slider.setValue(nValue);
 		addToSend(key, slider.getValue());
@@ -358,7 +336,7 @@ public class Interface extends JFrame
 		frameObjects.put("S" + key, slider);
 		frameObjects.put("T" + key, lab);
 	}
-	
+
 	/**
 	 * Used to change the value to an ID
 	 * 
@@ -368,15 +346,15 @@ public class Interface extends JFrame
 	 */
 	public static void changeValue(String key, int value)
 	{
-		JSlider slider = ((JSlider)frameObjects.get("S" + key));
-		JTextField lab = ((JTextField)frameObjects.get("T" + key));
+		JSlider slider = ((JSlider) frameObjects.get("S" + key));
+		JTextField lab = ((JTextField) frameObjects.get("T" + key));
 		slider.setValue(slider.getValue() + value);
 		addToSend(key, slider.getValue());
 		lab.setText(String.valueOf(slider.getValue()));
 		frameObjects.put("S" + key, slider);
 		frameObjects.put("T" + key, lab);
 	}
-	
+
 	/**
 	 * Used to add to the stack a value to send
 	 * 
@@ -393,7 +371,8 @@ public class Interface extends JFrame
 	/**
 	 * @return the requests
 	 */
-	public static HashMap<String, Integer> getRequests() {
+	public static HashMap<String, Integer> getRequests()
+	{
 		return requests;
 	}
 }

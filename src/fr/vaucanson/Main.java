@@ -12,7 +12,7 @@ public class Main
 	public static Sender sender;
 	public static Logger logger;
 	public static GamepadHandler gamepad;
-	
+
 	public static void main(String[] args) throws SecurityException, IOException
 	{
 		final FileHandler fileTxt = new FileHandler(new File(".", "log.txt").getAbsolutePath(), true);
@@ -25,16 +25,16 @@ public class Main
 		new Interface();
 		try
 		{
-			//sender = new Sender("192.168.0.18", "http://192.168.0.18/sd/index.php");
-			//sender.start();
+			// sender = new Sender("192.168.240.1", "http://192.168.240.1/sd/index.php");
+			// sender.start();
 		}
 		catch(Exception e)
 		{
-            logger.log(Level.SEVERE, "Can't reach " + e.getMessage() + "\tClosing program!");
-            for(Frame f : Interface.getFrames())
-            	f.dispose();
+			logger.log(Level.SEVERE, "Can't reach " + e.getMessage() + "\tClosing program!");
+			for(Frame f : Interface.getFrames())
+				f.dispose();
 		}
-		//gamepad = new GamepadHandler();
-		//gamepad.run();
+		gamepad = new GamepadHandler();
+		gamepad.run();
 	}
 }

@@ -3,7 +3,6 @@ package fr.vaucanson;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -16,15 +15,13 @@ public class GamepadHandler extends Thread
 	private Controller controller;
 	private Map<String, Boolean> buttonsPressed;
 	private Map<String, Float> axisStatus, povStatus;
-	
+
 	/**
 	 * Constructor
 	 */
 	public GamepadHandler()
-	{
-		
-	}
-	
+	{}
+
 	/**
 	 * Used to initialize the controller
 	 * 
@@ -35,13 +32,13 @@ public class GamepadHandler extends Thread
 	{
 		Main.logger.log(Level.INFO, "Setting Gamepad Controller...");
 		try
-        {
-	        Controllers.create();
-        }
-        catch(LWJGLException e)
-        {
-	        e.printStackTrace();
-        }
+		{
+			Controllers.create();
+		}
+		catch(LWJGLException e)
+		{
+			e.printStackTrace();
+		}
 		Controllers.poll();
 		for(int i = 0; i < Controllers.getControllerCount(); i++)
 		{
@@ -64,7 +61,7 @@ public class GamepadHandler extends Thread
 		povStatus = new HashMap<String, Float>();
 		Main.logger.log(Level.INFO, "Gamepad Controller OK!");
 	}
-	
+
 	/**
 	 * Checking the inputs of the controller
 	 */
@@ -72,24 +69,24 @@ public class GamepadHandler extends Thread
 	public void run()
 	{
 		try
-        {
-	        init();
-	        Thread.sleep(450);
-        }
-        catch(Exception e)
-        {
-        	return;
-        }
+		{
+			init();
+			Thread.sleep(450);
+		}
+		catch(Exception e)
+		{
+			return;
+		}
 		while(!Thread.interrupted())
 		{
 			try
-            {
-	            Thread.sleep(50);
-            }
-            catch(InterruptedException e)
-            {
-	            Main.logger.log(Level.WARNING, "Error when sleeping for the controller", e);
-            }
+			{
+				Thread.sleep(50);
+			}
+			catch(InterruptedException e)
+			{
+				Main.logger.log(Level.WARNING, "Error when sleeping for the controller", e);
+			}
 			controller.poll();
 			for(int i = 0; i < buttonsPressed.size(); i++)
 				if(buttonsPressed.get(controller.getButtonName(i)) != controller.isButtonPressed(i))
@@ -106,19 +103,21 @@ public class GamepadHandler extends Thread
 					onAxisValueChange(controller.getAxisName(i), controller.getAxisValue(i));
 					axisStatus.put(controller.getAxisName(i), controller.getAxisValue(i));
 				}
-			if(controller.getPovX() != povStatus.get("POVX"))
-			{
-				onPovValueChange("POVX", controller.getPovX());
-				povStatus.put("POVX", controller.getPovX());
-			}
-			if(controller.getPovX() != povStatus.get("POVX"))
-			{
-				onPovValueChange("POVY", controller.getPovY());
-				povStatus.put("POVY", controller.getPovX());
-			}
+			/*
+			 * if(controller.getPovX() != povStatus.get("POVX"))
+			 * {
+			 * onPovValueChange("POVX", controller.getPovX());
+			 * povStatus.put("POVX", controller.getPovX());
+			 * }
+			 * if(controller.getPovX() != povStatus.get("POVX"))
+			 * {
+			 * onPovValueChange("POVY", controller.getPovY());
+			 * povStatus.put("POVY", controller.getPovX());
+			 * }
+			 */
 		}
 	}
-	
+
 	/**
 	 * Called when a button is pressed
 	 * 
@@ -131,7 +130,7 @@ public class GamepadHandler extends Thread
 		if(name.equals(ACT_SUSTENT))
 			Interface.changeValue("st", -1);
 	}
-	
+
 	/**
 	 * Called when a button is released
 	 * 
@@ -142,7 +141,7 @@ public class GamepadHandler extends Thread
 	{
 		Main.logger.log(Level.INFO, "Button " + name + " pressed");
 	}
-	
+
 	/**
 	 * Called when an axis value changed
 	 * 
@@ -164,12 +163,12 @@ public class GamepadHandler extends Thread
 		else if(conf == CONF_RELATIVE)
 		{
 			if(name.equals(VALUE_SPEED))
-				Interface.changeValue("vi", (int)(-250 * value));
+				Interface.changeValue("vi", (int) (-250 * value));
 			else if(name.equals(VALUE_ORIENTATION))
-				Interface.changeValue("or", (int)(5 * value));
+				Interface.changeValue("or", (int) (5 * value));
 		}
 	}
-	
+
 	/**
 	 * Called when a POV axis value changed
 	 * 
@@ -182,11 +181,11 @@ public class GamepadHandler extends Thread
 		Main.logger.log(Level.INFO, "POV " + name + " modified to " + value);
 		if(name.equals(VALUE_ORIENTATION_POV))
 		{
-			Interface.changeValue("or", (int)value);
+			Interface.changeValue("or", (int) value);
 		}
 		else if(name.equals(VALUE_SPEED_POV))
 		{
-			Interface.changeValue("vi", -100 * (int)value);
+			Interface.changeValue("vi", -100 * (int) value);
 		}
 	}
 }

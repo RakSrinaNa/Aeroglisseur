@@ -110,10 +110,18 @@ public class Sender extends Thread
 			for(final String key : keys)
 				if(Interface.getRequests().get(key) != requestsSended.get(key))
 				{
+					int value = 0;
 					try
 					{
-						int value = Interface.getRequests().get(key);
+						value = Interface.getRequests().get(key);
 						sendGet(key + "=" + value);
+					}
+					catch(Exception e)
+					{
+						continue;
+					}
+					try
+					{
 						requestsSended.put(key, value);
 					}
 					catch(Exception e)
