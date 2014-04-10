@@ -3,6 +3,7 @@
 #include <FileIO.h>
 #include <Bridge.h>
 
+const int rpm_sustent = 100;
 const String speed_key = "vi";
 const String orientation_key = "or";
 const String sustentation_key = "st";
@@ -29,8 +30,7 @@ void printMessage(String message)
 
 int oriToDegrees(unsigned int ori)
 {
-  //ORI -> Min: 0 / Max: 100
-  return (int)ori*1.8 >= 180 ? 178 : (int)ori*1.8 <= 0 ? 0 : (int)ori*1.8;
+  return (15 + (int)(ori/70.0));
 }
 
 int RPMToServoSpeed(unsigned int rpm)
@@ -42,7 +42,12 @@ int RPMToServoSpeed(unsigned int rpm)
 
 void writeToMotors(String key, int value)
 {
-    if(value < 0 || value > 10000 || (key == orientation_key && value == orientation_value) || (key == speed_key && value == speed_value) || (key == sustentation_key && value == sustentation_value) || (key == horizontam_key && value == horizontal_value) || (key == vertical_key && value == vertical_value))
+    if(value < 0 || value > 10000 || 
+    (key == orientation_key && value == orientation_value) || 
+    (key == speed_key && value == speed_value) || 
+    (key == sustentation_key && value == sustentation_value) || 
+    (key == horizontal_cam_key && value == horizontal_cam_value) || 
+    (key == vertical_cam_key && value == vetical_cam_value))
         return;
     printMessage("Receiving key " + key + " with value " + value);
     if(key == speed_key)
@@ -62,14 +67,14 @@ void writeToMotors(String key, int value)
         if(value == 1)
         {
             printMessage("Switching sustentation ON");
-            motorSustentation.write(100);
+            motorSustentation.write(RPMToServoSpeed(rpm_sustent));
             sustentation_value = 1;
         }
         else
         {
             printMessage("Switching sustentation OFF");
             sustentation_value = value;
-            motorSustentation.write(90);
+            motorSustentation.write(RPMToServoSpeed(0));
         }
      }
      else if(key == horizontal_cam_key)
@@ -83,7 +88,7 @@ void writeToMotors(String key, int value)
     {
         printMessage("Setting orientation CamVertival to " + String(value));
         vetical_cam_value = value;
-        servoVertCam.write(oriToDegrees(value));
+        servoVertCam.write(map(100 - value, 0, 100, 20, 70));
     }
     else
         printMessage("Error, key not recognized! (" + key + ")");
@@ -114,10 +119,15 @@ void initAero()
     process.addParameter("/mnt/sd/arduino/www/" + values_file);
     process.run();
     speed_value = 0;
-    orientation_value = 90;
     sustentation_value = 0;
-    vetical_cam_value = 90;
-    horizontal_cam_value = 90;
+    orientation_value = 50;
+    vetical_cam_value = 50;
+    horizontal_cam_value = 70;
+    writeToMotors(speed_key, speed_value);
+    writeToMotors(sustentation_key, sustentation_value);
+    writeToMotors(orientation_key, orientation_value);
+    writeToMotors(vertical_cam_key, vetical_cam_value);
+    writeToMotors(horizontal_cam_key, horizontal_cam_value);
 }
 
 String readValuesFile()
@@ -148,11 +158,6 @@ void setup()
     servoMotor.attach(9); //O2
     servoVertCam.attach(6); //O3
     servoHorCam.attach(5); //O4
-    motorSustentation.write(90);
-    motorDirection.write(90);
-    servoMotor.write(90);
-    servoVertCam.write(90);
-    servoHorCam.write(90);
     initAero();
     printMessage("Done!");
 }
