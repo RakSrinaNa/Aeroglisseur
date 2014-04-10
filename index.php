@@ -40,11 +40,29 @@
 				echo 'Sustentation modifiee a: ';
 				echo $_GET['st'];
 			}
+			if(isset($_GET['cv']))
+			{
+				$lines = file('variables.txt');
+				$lines[3] = 'cv='.$_GET['cv']."\n";
+				$new_content = implode('', $lines);
+				$h = fopen('variables.txt', 'w');
+				fwrite($h, $new_content);
+				fclose($h);
+			}
+			if(isset($_GET['ch']))
+			{
+				$lines = file('variables.txt');
+				$lines[4] = 'ch='.$_GET['ch']."\n";
+				$new_content = implode('', $lines);
+				$h = fopen('variables.txt', 'w');
+				fwrite($h, $new_content);
+				fclose($h);
+			}
             echo '<br><br>Current variables.txt file:<br><br>';
-	foreach(file('variables.txt') as $temp)
-	{
-            echo $temp.'<br>';
-	}
+			foreach(file('variables.txt') as $temp)
+			{
+				echo $temp.'<br>';
+			}
 		?>
 	</body>
 </html>

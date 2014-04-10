@@ -12,9 +12,17 @@
             	Orientation:
                 <input type="text" name="or" />
             </p>
-	    <p>
+	    	<p>
             	Sustentation:
                 <input type="text" name="st" />
+            </p>
+            <p>
+            	Camera verticale:
+                <input type="text" name="cv" />
+            </p>
+            <p>
+            	Camera horizontale:
+                <input type="text" name="ch" />
             </p>
             <p>
 				<input type="submit" value="Valider" />
