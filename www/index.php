@@ -1,5 +1,6 @@
 ﻿<html>
 	<head>
+		<META HTTP-EQUIV="Refresh" CONTENT="10; URL=index.php"> 
 		<title>Resultats de la requete</title>
 	</head>
 	<body>
@@ -43,7 +44,7 @@
 			if(isset($_GET['cv']))
 			{
 				$lines = file('variables.txt');
-				$lines[3] = 'cv='.$_GET['cv']."\n";
+				$lines[4] = 'cv='.$_GET['cv']."\n";
 				$new_content = implode('', $lines);
 				$h = fopen('variables.txt', 'w');
 				fwrite($h, $new_content);
@@ -52,7 +53,7 @@
 			if(isset($_GET['ch']))
 			{
 				$lines = file('variables.txt');
-				$lines[4] = 'ch='.$_GET['ch']."\n";
+				$lines[3] = 'ch='.$_GET['ch']."\n";
 				$new_content = implode('', $lines);
 				$h = fopen('variables.txt', 'w');
 				fwrite($h, $new_content);
