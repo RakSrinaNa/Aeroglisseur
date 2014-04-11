@@ -35,7 +35,9 @@ int oriToDegrees(unsigned int ori)
 
 int RPMToServoSpeed(unsigned int rpm)
 {
-    if(rpm == 0)
+    if(rpm < 0)
+        return 0;
+    else if(rpm == 0)
         return 90;
     return (119 + (int)(rpm / 151.22));
 }
@@ -118,7 +120,7 @@ void initAero()
     process.addParameter("/mnt/sd/arduino/www/variables_start.txt");
     process.addParameter("/mnt/sd/arduino/www/" + values_file);
     process.run();
-    speed_value = 0;
+    speed_value = -1;
     sustentation_value = 0;
     orientation_value = 50;
     vetical_cam_value = 50;
