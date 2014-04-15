@@ -101,15 +101,14 @@ String writeToMotors(String key, int value)
         servoVertCam.write(map(100 - value, 0, 100, 20, 70));
         return "Setting orientation CamVertival to " + String(value);
     }
-    
-        return "Error, key not recognized! (" + key + ")";
+    return "Error, key not recognized! (" + key + ")";
 }
 
 String decrypt(String input)
 {
         if (input.indexOf('/') < 0)
             return "Error in path";
-        writeToMotors(input.substring(0, input.indexOf('/')), input.substring(input.indexOf('/') + 1).toInt());
+        return writeToMotors(input.substring(0, input.indexOf('/')), input.substring(input.indexOf('/') + 1).toInt());
 }
 
 void initAero()
@@ -149,15 +148,14 @@ void setup()
 void loop()
 {
   YunClient client = server.accept();
- 
   if (client) 
   {
     String command = client.readString();
     command.trim();
+    printMessage("Command recevied : " + command);
     String result = decrypt(command);
-    printMessage(result);
+    printMessage("Result : " + result);
     client.print(result);
     client.stop();
   }
-  delay(20);
 }
