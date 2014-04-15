@@ -154,7 +154,9 @@ void loop()
   {
     String command = client.readString();
     command.trim();
-    client.print(decrypt(command));
+    String result = decrypt(command);
+    printMessage(result);
+    client.print(result);
     client.stop();
   }
   delay(20);
