@@ -12,6 +12,7 @@ public class Main
 	public static Sender sender;
 	public static Logger logger;
 	public static GamepadHandler gamepad;
+	private final static String IP = "192.168.240.1";
 
 	public static void main(String[] args) throws SecurityException, IOException
 	{
@@ -25,7 +26,7 @@ public class Main
 		new Interface();
 		try
 		{
-			sender = new Sender("192.168.240.1", "http://192.168.240.1/sd/index.php");
+			sender = new Sender(IP, "http://" + IP + "/");
 			sender.start();
 		}
 		catch(Exception e)

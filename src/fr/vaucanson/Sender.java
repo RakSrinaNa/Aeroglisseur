@@ -45,10 +45,10 @@ public class Sender extends Thread
 	 * @return The response by the server
 	 * @throws Exception If there were an error with the connection
 	 */
-	synchronized private String sendGet(String params) throws Exception
+	synchronized private String sendGet(String key, String value) throws Exception
 	{
 		Date startDate = new Date();
-		URL url = new URL(IP_URL + "?" + params);
+		URL url = new URL(IP_URL + "arduino/" + key + "/" + value);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -114,7 +114,7 @@ public class Sender extends Thread
 					try
 					{
 						value = Interface.getRequests().get(key);
-						sendGet(key + "=" + value);
+						sendGet(key, String.valueOf(value));
 					}
 					catch(Exception e)
 					{
