@@ -101,14 +101,8 @@ public class Sender extends Thread
 	{
 		while(!Thread.interrupted())
 		{
-			try
-			{
-				Thread.sleep(5);
-			}
-			catch(final Exception exception)
-			{}
 			for(final String key : keys)
-				if(Interface.getRequests().containsKey(key) && Interface.getRequests().get(key) != requestsSended.get(key))
+				if(Interface.getRequests().containsKey(key) && (Interface.getRequests().get(key) != requestsSended.get(key)))
 				{
 					int value = 0;
 					try
@@ -121,7 +115,7 @@ public class Sender extends Thread
 						e.printStackTrace();
 						continue;
 					}
-						requestsSended.put(key, value);
+					requestsSended.put(key, value);
 				}
 		}
 	}

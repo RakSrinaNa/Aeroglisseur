@@ -13,6 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.logging.Level;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -20,16 +21,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
 
 public class Interface extends JFrame
 {
@@ -228,72 +224,6 @@ public class Interface extends JFrame
 		tempLabel.setMaximumSize(new Dimension(10, 10));
 		tempLabel.setBackground(Color.GRAY);
 		tempLabel.setText(String.valueOf(tempSlider.getValue()));
-		if(false && key == "st")
-		{
-			tempLabel.getDocument().addDocumentListener(new DocumentListener()
-			{
-				@Override
-				public void changedUpdate(DocumentEvent arg0)
-				{}
-
-				@Override
-				public void insertUpdate(final DocumentEvent arg0)
-				{
-					try
-					{
-						String text = arg0.getDocument().getText(0, arg0.getDocument().getLength());
-						System.out.println(text);
-						if(text.equals("1"))
-						{
-							SwingUtilities.invokeLater(new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									try
-									{
-										arg0.getDocument().remove(0, arg0.getDocument().getLength());
-										arg0.getDocument().insertString(0, "ON", new SimpleAttributeSet());
-									}
-									catch(BadLocationException e)
-									{
-										e.printStackTrace();
-									}
-								}
-							});
-						}
-						else
-						{
-							SwingUtilities.invokeLater(new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									try
-									{
-										arg0.getDocument().remove(0, arg0.getDocument().getLength());
-										arg0.getDocument().insertString(0, "OFF", new SimpleAttributeSet());
-									}
-									catch(BadLocationException e)
-									{
-										e.printStackTrace();
-									}
-								}
-							});
-						}
-						System.out.println();
-					}
-					catch(BadLocationException e)
-					{
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void removeUpdate(DocumentEvent arg0)
-				{}
-			});
-		}
 		tempLabel.setHorizontalAlignment(JLabel.CENTER);
 		tempLabel.setFocusable(false);
 		tempLabel.setToolTipText("T" + key);
