@@ -103,7 +103,7 @@ public class Sender extends Thread
 		{
 			try
 			{
-				Thread.sleep(50);
+				Thread.sleep(5);
 			}
 			catch(final Exception exception)
 			{}
