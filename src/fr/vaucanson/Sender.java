@@ -108,7 +108,7 @@ public class Sender extends Thread
 			catch(final Exception exception)
 			{}
 			for(final String key : keys)
-				if(Interface.getRequests().get(key) != requestsSended.get(key))
+				if(Interface.getRequests().containsKey(key) && Interface.getRequests().get(key) != requestsSended.get(key))
 				{
 					int value = 0;
 					try
@@ -118,16 +118,10 @@ public class Sender extends Thread
 					}
 					catch(Exception e)
 					{
+						e.printStackTrace();
 						continue;
 					}
-					try
-					{
 						requestsSended.put(key, value);
-					}
-					catch(Exception e)
-					{
-						Main.logger.log(Level.WARNING, "Error when contacting Arduino!", e);
-					}
 				}
 		}
 	}
