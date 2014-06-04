@@ -58,7 +58,6 @@ String writeToMotors(String key, int value)
     printMessage("Receiving key " + key + " with value " + value);
     if(key == speed_key)
     {
-        
         motorDirection.write(RPMToServoSpeed(value));
         speed_value = value;
         return "Setting speed to " + String(value) + " which is " + String(RPMToServoSpeed(value));
@@ -106,9 +105,9 @@ String writeToMotors(String key, int value)
 
 String decrypt(String input)
 {
-        if (input.indexOf('/') < 0)
-            return "Error in path";
-        return writeToMotors(input.substring(0, input.indexOf('/')), input.substring(input.indexOf('/') + 1).toInt());
+  if (input.indexOf('/') < 0)
+     return "Error in path";
+  return writeToMotors(input.substring(0, input.indexOf('/')), input.substring(input.indexOf('/') + 1).toInt());
 }
 
 void initAero()
